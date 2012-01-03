@@ -10,8 +10,8 @@ parse = lispparser()
 lexer = lisplexer()
 
 if __name__ == "__main__":
-    globals = Scope()
-    scopechain = [globals]
+    global_scope = Scope()
+    scopechain = [global_scope]
     while True:
         try:
             txt = raw_input("pylisp> ")
