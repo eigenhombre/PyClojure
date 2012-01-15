@@ -1,2 +1,7 @@
 *.pyc
 parsetab.py
+.DS_Store
+.externalToolBuilders/*
+.project
+.pydevproject
+parser.out

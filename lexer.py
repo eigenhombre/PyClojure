@@ -2,15 +2,17 @@ import ply.lex as lex
 
 reserved = {'nil': 'NIL'}
 
-tokens = ['LPAREN',
-          'ATOM',
+tokens = ['ATOM',
           'INTEGER',
-          'RPAREN'] + list(reserved.values())
+          'LBRACKET', 'RBRACKET',
+          'LPAREN', 'RPAREN'] + list(reserved.values())
 
 def lisplexer():
     t_LPAREN = r'\('
     t_RPAREN = r'\)'
-    t_ignore = ' \t'
+    t_LBRACKET = r'\['
+    t_RBRACKET = r'\]'
+    t_ignore = ' \t\r'
     t_ignore_COMMENT = r'\;.*'
 
     def t_INTEGER(t):

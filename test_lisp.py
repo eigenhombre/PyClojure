@@ -1,15 +1,15 @@
 from lexer import lisplexer  # Need tokens for parser
 from parser import lispparser
-from core import (Atom, List, Scope, evaluate, tostring,
+from core import (Atom, Vector, List, Scope, evaluate, tostring,
                   UnknownVariable)
 
 def test_lexer():
     lexer = lisplexer()
     lexer.input("""(a 
-                      (nested) list (of 534 atoms 
+                      (nested) list (of 534 atoms [and vector]
                           (and lists)))  ;; with comments
                 """)
-    assert 16 == len([tok for tok in lexer])
+    assert 20 == len([tok for tok in lexer])
     lexer.input("")
     assert [tok for tok in lexer] == []
 
@@ -37,6 +37,8 @@ def test_core():
     List(Atom('car'), Atom('cadr'), 666)
     List(List())
     List(List('car'))
+    Vector()
+    Vector(1, 2, 3)
     assert Atom() == Atom()
     assert List() == List()
     assert List(1) == List(1)
@@ -46,6 +48,9 @@ def test_core():
     assert List(Atom()) == List(Atom())
     assert List(Atom('a')) == List(Atom('a'))
     assert List(Atom('b')) != List(Atom('a'))
+    assert Vector(1, 2) != Vector(2, 1)
+    assert Vector(1, 2) == Vector(1, 2)
+    assert Vector(1, 2) != List(1, 2)
 
 
 def test_eval():
@@ -54,6 +59,8 @@ def test_eval():
     assert evaluate(parse("666"), scopechain) == 666
     assert evaluate(parse("nil"), scopechain) == None
     assert evaluate(parse("()"), scopechain) == List()
+    assert evaluate(parse("[]"), scopechain) == Vector()
+    assert evaluate(parse("[1 2 3]"), scopechain) == Vector(1, 2, 3)
     try:
         evaluate(parse("a"), scopechain)
         assert False, "UnknownVariable exception not raised!"
@@ -63,7 +70,7 @@ def test_eval():
     assert evaluate(parse("a"), scopechain) == 777
     evaluate(parse("(def a 666)"), scopechain)
     assert evaluate(parse("a"), scopechain) == 666
-
+    assert evaluate(parse("[1 a]"), scopechain) == Vector(1, 666)
 
 def test_to_string():
     parse = lispparser()
@@ -73,6 +80,7 @@ def test_to_string():
     assert tostring(parse("(a)")) == "(a)"
     assert tostring(parse("(a b)")) == "(a b)"
     assert tostring(parse("(a (b c))")) == "(a (b c))"
+    assert tostring(parse("[]")) == "[]"
 
 def test_scope():
     s = Scope()

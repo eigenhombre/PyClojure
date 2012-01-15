@@ -2,37 +2,49 @@ Author: John Jacobsen, NPX Designs, Inc. john@mail.npxdesigns.com
 
 This project consists of the very first steps of a port of Clojure to
 Python.  At the moment it is interpreted and does very little (see
-file test_lisp.py for examples).
+file test_lisp.py for examples).  I probably shouldn't even call it PyClojure
+at this point, but the name at least serves to indicate my intentions....
 
-It was inspired in part by my recent fascination with Clojure, my
-long-standing love of Python, and a recent compiler class[1] I took.
-It may or may not actually go anywhere, or wind up being faithful to
-the existing Clojure language family (Clojure on the JVM,
-ClojureScript, clojure-clr, ...).  Mostly it's just to see how far I
-can take it.  I probably shouldn't even call it PyClojure at this point,
-but the name serves to indicate my intentions....
+DEPENDENCIES
 
-[1] http://www.dabeaz.com/chicago/compiler.html
+- PLY [1] (for lexing and parsing)
+- Nose [2] (to run unit tests)
+- Python 2.6+
 
 WHY DO THIS?
 
-1. I like Python
-2. I like Clojure and want to learn it better
-3. I like compilers and interpreters and want to learn more about those
-4. I find the long JVM startup time irritating
+1. I have a long-standing love of Python and am very familiar w/ its libraries
+2. I am fascinated by Lisp in general and Clojure in particular, and want to 
+   learn it better
+3. I like compilers[3] and interpreters and want to learn more about language
+   implementation in general
+4. I find the long JVM startup time irritating, and never loved Java all that
+   much
 5. I can't find evidence that anyone else is doing this at this time.
 
 Feel free to join in!
 
 NEXT STEPS
 
-- Vectors
 - Keywords
 - Maps
 - Sets
 - Lambda / fn / (# ...)
+- loop/recur
+- Macros
+- Defn
+- Namespaces
+- Real persistent data structures (currently Python lists are used)
+- ...
 
 DONE
 
-- Parsing and storage of trees of lists
-- Def. and simple evaluation
+- Parsing and storage of trees of lists, vectors, atoms, and integers
+- Atoms, lists and vectors
+- 'def' and simple evaluation
+
+
+[1] http://www.dabeaz.com/ply/
+[2] http://readthedocs.org/docs/nose/en/latest/
+[3] For example, I just wrote a compiler for a small subset of Go for this
+    excellent class: http://www.dabeaz.com/chicago/compiler.html

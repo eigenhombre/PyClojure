@@ -16,17 +16,26 @@ class Atom(ComparableExpr):
         return "ATOM(%s, %s)" % (self.__name, self.__binding)
 
 
-class List(ComparableExpr):
+class ComparableList(ComparableExpr):
     def __init__(self, *args):
-        self.__list = []
+        self.__contents = []
         for arg in args:
-            self.__list.append(arg)
+            self.__contents.append(arg)
 
     def contents(self):
-        return self.__list
+        return self.__contents
 
     def __repr__(self):
-        return "LIST(%s)" % ','.join([str(el) for el in self.__list])
+        return "%s(%s)" % (self.__class__.__name__.upper(),
+                           ','.join([str(el) for el in self.__contents]))
+
+
+class List(ComparableList):
+    pass
+
+
+class Vector(ComparableList):
+    pass
 
 
 class Scope(dict):
@@ -51,6 +60,8 @@ def evaluate(x, scopes):
         return x
     elif type(x) is Atom:
         return find_in_scopechain(scopes, x.name())
+    elif type(x) is Vector:
+        return apply(Vector, [evaluate(el, scopes) for el in x.contents()])
     elif type(x) is List:
         contents = x.contents()
         if len(contents) == 0:
@@ -73,5 +84,8 @@ def tostring(x):
     elif type(x) is List:
         inner = ' '.join([tostring(x) for x in x.contents()])
         return '(%s)' % inner
+    elif type(x) is Vector:
+        inner = ' '.join([tostring(x) for x in x.contents()])
+        return '[%s]' % inner
     else:
         raise TypeError('%s is unknown!' % x)
