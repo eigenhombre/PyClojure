@@ -8,7 +8,8 @@ long-standing love of Python, and a recent compiler class[1] I took.
 It may or may not actually go anywhere, or wind up being faithful to
 the existing Clojure language family (Clojure on the JVM,
 ClojureScript, clojure-clr, ...).  Mostly it's just to see how far I
-can take it.
+can take it.  I probably shouldn't even call it PyClojure, but the
+name serves to indicate my intentions....
 
 [1] http://www.dabeaz.com/chicago/compiler.html
 
