@@ -13,3 +13,25 @@ name serves to indicate my intentions....
 
 [1] http://www.dabeaz.com/chicago/compiler.html
 
+WHY DO THIS?
+
+1. I like Python
+2. I like Clojure and want to learn it better
+3. I like compilers and interpreters and want to learn more about those
+4. I find the long JVM startup time irritating
+5. I can't find evidence that anyone else is doing this at this time.
+
+Feel free to join in!
+
+NEXT STEPS
+
+- Vectors
+- Keywords
+- Maps
+- Sets
+- Lambda / fn / (# ...)
+
+DONE
+
+- Parsing and storage of trees of lists
+- Def. and simple evaluation
