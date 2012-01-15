@@ -1,7 +1,8 @@
 Author: John Jacobsen, NPX Designs, Inc. john@mail.npxdesigns.com
 
 This project consists of the very first steps of a port of Clojure to
-Python.  At the moment it is interpreted and does very little.
+Python.  At the moment it is interpreted and does very little (see
+file test_lisp.py for examples).
 
 It was inspired in part by my recent fascination with Clojure, my
 long-standing love of Python, and a recent compiler class[1] I took.
