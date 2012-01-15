@@ -1,1 +1,14 @@
-Um, I guess I should put some stuff here.
+Author: John Jacobsen, NPX Designs, Inc. john@mail.npxdesigns.com
+
+This project consists of the very first steps of a port of Clojure to
+Python.  
+
+It was inspired in part by my recent fascination with Clojure, my
+long-standing love of Python, and a recent compiler class[1] I took.
+It may or may not actually go anywhere, or wind up being faithful to
+the existing Clojure language family (Clojure on the JVM,
+ClojureScript, clojure-clr, ...).  Mostly it's just to see how far I
+can take it.
+
+[1] http://www.dabeaz.com/chicago/compiler.html
+
