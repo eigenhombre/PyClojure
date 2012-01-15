@@ -1,6 +1,7 @@
+import sys
 import ply.yacc as yacc
-from lisp_lex import tokens
-from lisp_core import Atom, List
+from lexer import tokens
+from core import Atom, List
 
 # BNF grammar for 'lisp'
 # sexpr : atom
@@ -11,6 +12,14 @@ from lisp_core import Atom, List
 #        | sexprs sexpr
 # list : ( sexprs )
 #      | ( )
+
+_quiet = True
+
+class LispLogger(yacc.PlyLogger):
+    def debug(self, *args, **kwargs):
+        if not _quiet:
+            super(type(self), self).debug(*args, **kwargs)
+
 
 def lispparser():
     def p_sexpr_nil(p):
@@ -53,4 +62,11 @@ def lispparser():
         'list : LPAREN RPAREN'
         p[0] = List()
 
-    return yacc.yacc().parse
+    def p_error(p):
+        if p:
+            print(p.lineno, "Syntax error in input at token '%s'" % p.value)
+        else:
+            print("EOF","Syntax error. No more input.")
+
+    return yacc.yacc(errorlog=LispLogger(sys.stderr)).parse
+

@@ -5,7 +5,7 @@ _tabversion = '3.2'
 
 _lr_method = 'LALR'
 
-_lr_signature = '\xcb\x11\x1f.\xc9\x94\xf7\xe1L\xabQ\x92\x07\xa5\xfb\x8e'
+_lr_signature = '\x8ar\xcd\xd1\x9edn\xf6\xf0\xa3t\x9e|\nt\xd1'
     
 _lr_action_items = {'RPAREN':([1,3,4,5,6,7,8,9,10,11,],[-1,-4,7,-2,-3,-8,-5,10,-7,-6,]),'NIL':([0,1,3,4,5,6,7,8,9,10,11,],[1,-1,-4,1,-2,-3,-8,-5,1,-7,-6,]),'LPAREN':([0,1,3,4,5,6,7,8,9,10,11,],[4,-1,-4,4,-2,-3,-8,-5,4,-7,-6,]),'ATOM':([0,1,3,4,5,6,7,8,9,10,11,],[5,-1,-4,5,-2,-3,-8,-5,5,-7,-6,]),'INTEGER':([0,1,3,4,5,6,7,8,9,10,11,],[6,-1,-4,6,-2,-3,-8,-5,6,-7,-6,]),'$end':([1,2,3,5,6,7,10,],[-1,0,-4,-2,-3,-8,-7,]),}
 
@@ -26,12 +26,12 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> sexpr","S'",1,None,None,None),
-  ('sexpr -> NIL','sexpr',1,'p_sexpr_nil','/Users/jacobsen/Programming/Python/beazley-classes/compiler-in-python/compiler-prep/lisp/lisp_yacc.py',17),
-  ('sexpr -> ATOM','sexpr',1,'p_sexpr_atom','/Users/jacobsen/Programming/Python/beazley-classes/compiler-in-python/compiler-prep/lisp/lisp_yacc.py',21),
-  ('sexpr -> INTEGER','sexpr',1,'p_sexpr_integer','/Users/jacobsen/Programming/Python/beazley-classes/compiler-in-python/compiler-prep/lisp/lisp_yacc.py',25),
-  ('sexpr -> list','sexpr',1,'p_sexpr_list','/Users/jacobsen/Programming/Python/beazley-classes/compiler-in-python/compiler-prep/lisp/lisp_yacc.py',29),
-  ('sexprs -> sexpr','sexprs',1,'p_sexprs_sexpr','/Users/jacobsen/Programming/Python/beazley-classes/compiler-in-python/compiler-prep/lisp/lisp_yacc.py',33),
-  ('sexprs -> sexprs sexpr','sexprs',2,'p_sexprs_sexprs_sexpr','/Users/jacobsen/Programming/Python/beazley-classes/compiler-in-python/compiler-prep/lisp/lisp_yacc.py',37),
-  ('list -> LPAREN sexprs RPAREN','list',3,'p_list','/Users/jacobsen/Programming/Python/beazley-classes/compiler-in-python/compiler-prep/lisp/lisp_yacc.py',46),
-  ('list -> LPAREN RPAREN','list',2,'p_empty_list','/Users/jacobsen/Programming/Python/beazley-classes/compiler-in-python/compiler-prep/lisp/lisp_yacc.py',53),
+  ('sexpr -> NIL','sexpr',1,'p_sexpr_nil','/Users/jacobsen/Programming/Lisp/Clojure/pyclojure/parser.py',26),
+  ('sexpr -> ATOM','sexpr',1,'p_sexpr_atom','/Users/jacobsen/Programming/Lisp/Clojure/pyclojure/parser.py',30),
+  ('sexpr -> INTEGER','sexpr',1,'p_sexpr_integer','/Users/jacobsen/Programming/Lisp/Clojure/pyclojure/parser.py',34),
+  ('sexpr -> list','sexpr',1,'p_sexpr_list','/Users/jacobsen/Programming/Lisp/Clojure/pyclojure/parser.py',38),
+  ('sexprs -> sexpr','sexprs',1,'p_sexprs_sexpr','/Users/jacobsen/Programming/Lisp/Clojure/pyclojure/parser.py',42),
+  ('sexprs -> sexprs sexpr','sexprs',2,'p_sexprs_sexprs_sexpr','/Users/jacobsen/Programming/Lisp/Clojure/pyclojure/parser.py',46),
+  ('list -> LPAREN sexprs RPAREN','list',3,'p_list','/Users/jacobsen/Programming/Lisp/Clojure/pyclojure/parser.py',55),
+  ('list -> LPAREN RPAREN','list',2,'p_empty_list','/Users/jacobsen/Programming/Lisp/Clojure/pyclojure/parser.py',62),
 ]

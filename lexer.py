@@ -5,8 +5,7 @@ reserved = {'nil': 'NIL'}
 tokens = ['LPAREN',
           'ATOM',
           'INTEGER',
-          'RPAREN',
-          'COMMENT'] + list(reserved.values())
+          'RPAREN'] + list(reserved.values())
 
 def lisplexer():
     t_LPAREN = r'\('

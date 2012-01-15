@@ -1,7 +1,7 @@
-from lisp_lex import lisplexer  # Need tokens for parser
-from lisp_yacc import lispparser
-from lisp_core import (Atom, List, Scope, evaluate, tostring,
-                       UnknownVariable)
+from lexer import lisplexer  # Need tokens for parser
+from parser import lispparser
+from core import (Atom, List, Scope, evaluate, tostring,
+                  UnknownVariable)
 
 def test_lexer():
     lexer = lisplexer()

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from lisp_lex import tokens, lisplexer
-from lisp_yacc import lispparser
-from lisp_core import evaluate, tostring, Scope
+from lexer import lisplexer
+from parser import lispparser
+from core import evaluate, tostring, Scope
 import re
 
 
@@ -22,3 +22,5 @@ if __name__ == "__main__":
         except (EOFError, KeyboardInterrupt):
             print
             break
+        except Exception, e:
+            print e

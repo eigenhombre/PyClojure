@@ -8,6 +8,7 @@ class Atom(ComparableExpr):
         self.__name = name
         self.__binding = value
 
+
     def name(self):
         return self.__name
 
