@@ -46,7 +46,10 @@ DONE
 - 'def' and simple evaluation
 
 
-[1] http://www.dabeaz.com/ply/
+[1] http://www.dabeaz.com/ply/.  It turns out Python is actually quite serviceable
+    for writing compilers, particularly for prototyping, and I'm curious how far
+    one can push this.
 [2] http://readthedocs.org/docs/nose/en/latest/
 [3] For example, I just wrote a compiler for a small subset of Go for this
-    excellent class: http://www.dabeaz.com/chicago/compiler.html
+    excellent class by the author of PLY:
+    http://www.dabeaz.com/chicago/compiler.html
