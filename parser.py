@@ -1,10 +1,11 @@
 import sys
 import ply.yacc as yacc
 from lexer import tokens
-from core import Atom, List, Vector
+from core import Atom, Keyword, List, Vector
 
 # BNF grammar for 'lisp'
 # sexpr : atom
+#       | keyword
 #       | integer
 #       | list
 #       | vector
@@ -30,6 +31,10 @@ def lispparser():
     def p_sexpr_atom(p):
         'sexpr : ATOM'
         p[0] = Atom(p[1])
+
+    def p_keyword(p):
+        'sexpr : KEYWORD'
+        p[0] = Keyword(p[1])
 
     def p_sexpr_integer(p):
         'sexpr : INTEGER'

@@ -2,7 +2,7 @@ import ply.lex as lex
 
 reserved = {'nil': 'NIL'}
 
-tokens = ['ATOM',
+tokens = ['ATOM', 'KEYWORD',
           'INTEGER',
           'LBRACKET', 'RBRACKET',
           'LPAREN', 'RPAREN'] + list(reserved.values())
@@ -14,6 +14,11 @@ def lisplexer():
     t_RBRACKET = r'\]'
     t_ignore = ' \t\r'
     t_ignore_COMMENT = r'\;.*'
+
+    def t_KEYWORD(t):
+        r'\:[a-zA-Z_-]+'
+        t.value = t.value[1:]
+        return t
 
     def t_INTEGER(t):
         r'[0-9]+'

@@ -26,12 +26,12 @@ Feel free to join in!
 
 NEXT STEPS
 
-- Keywords
 - Maps
 - Sets
 - Lambda / fn / (# ...)
-- loop/recur
 - Macros
+- Quote (do w/ macro...?)
+- loop/recur
 - Defn
 - Namespaces
 - Real persistent data structures (currently Python lists are used)
@@ -39,8 +39,8 @@ NEXT STEPS
 
 DONE
 
-- Parsing and storage of trees of lists, vectors, atoms, and integers
-- Atoms, lists and vectors
+- Parsing and storage of trees of lists, vectors, atoms, integers,
+  and integers
 - 'def' and simple evaluation
 
 
