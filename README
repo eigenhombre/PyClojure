@@ -29,12 +29,14 @@ NEXT STEPS
 - Maps
 - Sets
 - Lambda / fn / (# ...)
+- Python interop
 - Macros
 - Quote (do w/ macro...?)
 - loop/recur
 - Defn
 - Namespaces
 - Real persistent data structures (currently Python lists are used)
+- setup.py packaging
 - ...
 
 DONE
