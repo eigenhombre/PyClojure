@@ -1,3 +1,5 @@
+import operator
+
 class ComparableExpr(object):
     def __eq__(self, other):
         return (isinstance(other, self.__class__)
@@ -36,15 +38,15 @@ class Vector(ComparableList):
     pass
 
 
-class Scope(dict):
-    pass
-
-
 class Keyword(ComparableExpr):
     def __init__(self, name):
         self.name = name
     def __repr__(self):
         return ":"+self.name
+
+
+class Scope(dict):
+    pass
 
 
 class UnknownVariable(Exception):
@@ -79,6 +81,15 @@ def tostring(x):
         raise TypeError('%s is unknown!' % x)
 
 
+def plus(args=[]):
+    return reduce(operator.add, args, 0)
+
+def times(args=[]):
+    return reduce(operator.mul, args, 1)
+
+builtins = {'+': plus,
+            '*': times}
+
 def evaluate(x, scopes):
     if type(x) is int:
         return x
@@ -93,11 +104,15 @@ def evaluate(x, scopes):
         if len(contents) == 0:
             return x  # ()
         first = contents[0]
-        if type(first) is Atom and first.name() == "def":
-            atom, rhs = contents[1:3]
-            if type(atom) is not Atom:
-                raise TypeError("%s is not the name of an atom!" %
-                                tostring(atom))
-            scopes[-1][atom.name()] = evaluate(rhs, scopes)
-            return atom
+        if type(first) is Atom:
+            name = first.name()
+            if name == "def":
+                atom, rhs = contents[1:3]
+                if type(atom) is not Atom:
+                    raise TypeError("%s is not the name of an atom!" %
+                                    tostring(atom))
+                scopes[-1][atom.name()] = evaluate(rhs, scopes)
+                return atom
+            elif name in builtins:
+                return builtins[name](contents[1:])
     return x

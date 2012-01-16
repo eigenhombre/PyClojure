@@ -25,7 +25,7 @@ def lisplexer():
         return t
 
     def t_ATOM(t):
-        r'[a-zA-Z_-]+'
+        r'[\*\+\!\-\_a-zA-Z_-]+'
         t.type = reserved.get(t.value, 'ATOM')
         return t
 

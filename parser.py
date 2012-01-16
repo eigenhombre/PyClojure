@@ -22,7 +22,6 @@ class LispLogger(yacc.PlyLogger):
         if not _quiet:
             super(type(self), self).debug(*args, **kwargs)
 
-
 def lispparser():
     def p_sexpr_nil(p):
         'sexpr : NIL'

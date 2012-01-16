@@ -44,6 +44,7 @@ DONE
 - Parsing and storage of trees of lists, vectors, atoms, integers,
   and integers
 - 'def' and simple evaluation
+- A few builtin functions
 
 
 [1] http://www.dabeaz.com/ply/.  It turns out Python is actually quite serviceable

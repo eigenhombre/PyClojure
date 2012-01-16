@@ -1,7 +1,15 @@
 from lexer import lisplexer  # Need tokens for parser
 from parser import lispparser
 from core import (Atom, Keyword, Vector, List, Scope, evaluate, tostring,
-                  UnknownVariable)
+                  UnknownVariable, builtins)
+
+
+def test_builtins():
+    assert builtins['+']() == 0
+    assert builtins['+']([2, 2]) == 4
+    assert builtins['*']() == 1
+    assert builtins['*']([1, 2, 3]) == 6
+
 
 def test_lexer():
     lexer = lisplexer()
@@ -79,7 +87,11 @@ def test_eval():
     assert evalparse("a") == 666
     assert evalparse("[1 a]") == Vector(1, 666)
     assert evalparse(":a") == Keyword("a")
-
+    assert evalparse("(+ 2 2)") == 4
+    assert evalparse("(+)") == 0
+    assert evalparse("(+ 1 2 3 4)") == 10
+    assert evalparse("(*)") == 1
+    assert evalparse("(* 1 2 3 4 5)") == 120
 
 def test_to_string():
     parse = lispparser()
