@@ -1,9 +1,10 @@
 Author: John Jacobsen, NPX Designs, Inc. john@mail.npxdesigns.com
 
-This project consists of the very first steps of a port of Clojure to
-Python.  At the moment it is interpreted and does very little (see
-file test_lisp.py for examples).  I probably shouldn't even call it PyClojure
-at this point, but the name at least serves to indicate my intentions....
+This project consists of the very first steps of an implementation of
+the Clojure language to Python.  At the moment it is interpreted and
+does very little (see file test_lisp.py for examples).  I probably
+shouldn't even call it PyClojure at this point, but the name at least
+serves to indicate my intentions....
 
 DEPENDENCIES
 
@@ -13,14 +14,13 @@ DEPENDENCIES
 
 WHY DO THIS?
 
-1. I have a long-standing love of Python and am very familiar w/ its libraries
-2. I am fascinated by Lisp in general and Clojure in particular, and want to 
-   learn it better
-3. I like compilers[3] and interpreters and want to learn more about language
-   implementation in general
-4. I find the long JVM startup time irritating, and never loved Java all that
-   much
-5. I can't find evidence that anyone else is doing this at this time.
+The long JVM startup time makes use of Clojure for scripting common
+system tasks somewhat unworkable, or at least irritating.  NewLISP[3]
+would be an option, but this implementation is meant to maintain
+syntax-compatibility with Clojure (as implemented on the JVM).  The
+goal is to provide a real Lisp with macros, and Clojure's syntactic
+goodness, as well as immutable data structures, which can coexist with
+Python and make use of its extensive, 'batteries included' libraries.
 
 Feel free to join in!
 
@@ -35,7 +35,7 @@ NEXT STEPS
 - loop/recur
 - Defn
 - Namespaces
-- Real persistent data structures (currently Python lists are used)
+- Real immutable, persistent data structures (currently Python lists are used)
 - setup.py packaging
 - ...
 
@@ -51,6 +51,4 @@ DONE
     for writing compilers, particularly for prototyping, and I'm curious how far
     one can push this.
 [2] http://readthedocs.org/docs/nose/en/latest/
-[3] For example, I just wrote a compiler for a small subset of Go for this
-    excellent class by the author of PLY:
-    http://www.dabeaz.com/chicago/compiler.html
+[3] http://www.newlisp.org/
