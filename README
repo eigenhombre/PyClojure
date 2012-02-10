@@ -1,5 +1,7 @@
 Author: John Jacobsen, NPX Designs, Inc. john@mail.npxdesigns.com
 
+Started: December, 2011
+
 This project consists of the very first steps of an implementation of
 the Clojure language in Python.  At the moment it is interpreted and
 does very little (see file test_lisp.py for examples).  I probably
