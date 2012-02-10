@@ -18,11 +18,12 @@ WHY DO THIS?
 
 The long JVM startup time makes use of Clojure for scripting common
 system tasks somewhat unworkable, or at least irritating.  NewLISP[3]
-would be an option, but this implementation is meant to maintain
-syntax-compatibility with Clojure (as implemented on the JVM).  The
-goal is to provide a real Lisp with macros, and Clojure's syntactic
-goodness, as well as immutable data structures, which can coexist with
-Python and make use of its extensive, 'batteries included' libraries.
+would be an option, but this particular implementation is meant to
+eventually be syntax-compatible with Clojure (as currently implemented 
+on the JVM).  The goal is to provide a real Lisp with macros, and Clojure's
+syntactic goodness, as well as immutable data structures, which can 
+coexist with Python and make use of its extensive, 'batteries included'
+libraries.
 
 There has been some discussion[4] as well getting Clojure running under
 PyPy, something which I think would be quite interesting.
