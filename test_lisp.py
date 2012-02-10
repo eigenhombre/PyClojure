@@ -1,6 +1,6 @@
 from lexer import lisplexer  # Need tokens for parser
 from parser import lispparser
-from core import (Atom, Keyword, Vector, List, Scope, evaluate, tostring,
+from core import (Atom, Keyword, Vector, List, Map, Scope, evaluate, tostring,
                   UnknownVariable, builtins)
 
 
@@ -62,6 +62,13 @@ def test_core():
     assert Vector(1, 2) != List(1, 2)
     assert Keyword("a") == Keyword("a")
     assert Keyword("a") != Keyword("b")
+    Map()
+    Map(x=1)
+    assert Map(x=1) == Map(x=1)
+    assert Map(x=1) != Map(x=2)
+    assert Map(x=1) != Map(x=1, a=3)
+    assert Map(x=1)["x"] == 1
+    Map()["1"] = 2
 
 
 def test_eval():
@@ -75,6 +82,13 @@ def test_eval():
     assert evalparse("()") == List()
     assert evalparse("[]") == Vector()
     assert evalparse("[1 2 3]") == Vector(1, 2, 3)
+    assert evalparse("{}") == Map()
+    m = Map()
+    m[1] = 2
+    assert evalparse("{1 2}") == m
+    m[3] = 4
+    #assert evalparse("{1 2, 3 4}") == m <-- Get this working next
+
     try:
         evalparse("a")
         assert False, "UnknownVariable exception not raised!"
@@ -94,6 +108,7 @@ def test_eval():
     assert evalparse("(* 1 2 3 4 5)") == 120
     assert evalparse("(+ 2 (+ 2 3))") == 7
 
+
 def test_to_string():
     parse = lispparser()
     assert tostring(parse("nil")) =="nil"
@@ -104,6 +119,10 @@ def test_to_string():
     assert tostring(parse("(a (b c))")) == "(a (b c))"
     assert tostring(parse("[]")) == "[]"
     assert tostring(parse(":a")) == ":a"
+    assert tostring(parse("{}")) == "{}"
+    assert tostring(parse("{1 2}")) == "{1 2}"
+    #assert tostring(parse("{1 2, 3 4}")) == "{1 2, 3 4}"
+
 
 def test_scope():
     s = Scope()

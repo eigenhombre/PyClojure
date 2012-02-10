@@ -5,6 +5,7 @@ reserved = {'nil': 'NIL'}
 tokens = ['ATOM', 'KEYWORD',
           'INTEGER',
           'LBRACKET', 'RBRACKET',
+          'LBRACE', 'RBRACE',
           'LPAREN', 'RPAREN'] + list(reserved.values())
 
 def lisplexer():
@@ -12,7 +13,9 @@ def lisplexer():
     t_RPAREN = r'\)'
     t_LBRACKET = r'\['
     t_RBRACKET = r'\]'
-    t_ignore = ' \t\r'
+    t_LBRACE = r'\{'
+    t_RBRACE = r'\}'
+    t_ignore = ' ,\t\r'
     t_ignore_COMMENT = r'\;.*'
 
     def t_KEYWORD(t):

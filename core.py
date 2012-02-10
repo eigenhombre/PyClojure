@@ -1,9 +1,28 @@
 import operator
 
+
 class ComparableExpr(object):
     def __eq__(self, other):
         return (isinstance(other, self.__class__)
                 and self.__dict__ == other.__dict__)
+
+
+class Map(ComparableExpr):
+    def __init__(self, **kwargs):
+        self.__dict = kwargs
+
+    def __getitem__(self, name):
+        return self.__dict[name]
+
+    def __setitem__(self, name, value):
+        self.__dict[name] = value
+
+    def __repr__(self):
+        return 'MAP(%s)' % (self.__dict)
+
+    def items(self):
+        return self.__dict.items()
+
 
 class Atom(ComparableExpr):
     def __init__(self, name=None, value=None):
@@ -77,6 +96,9 @@ def tostring(x):
     elif type(x) is Vector:
         inner = ' '.join([tostring(x) for x in x.contents()])
         return '[%s]' % inner
+    elif type(x) is Map:
+        inner = ','.join(['%s %s' % (k, v) for k,v in x.items()])
+        return '{%s}' % inner
     else:
         raise TypeError('%s is unknown!' % x)
 
@@ -84,11 +106,14 @@ def tostring(x):
 def plus(args=[]):
     return reduce(operator.add, args, 0)
 
+
 def times(args=[]):
     return reduce(operator.mul, args, 1)
 
+
 builtins = {'+': plus,
             '*': times}
+
 
 def evaluate(x, scopes):
     if type(x) is int:

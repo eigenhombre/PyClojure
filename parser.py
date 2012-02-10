@@ -1,7 +1,7 @@
 import sys
 import ply.yacc as yacc
 from lexer import tokens
-from core import Atom, Keyword, List, Vector
+from core import Atom, Keyword, List, Vector, Map
 
 # BNF grammar for 'lisp'
 # sexpr : atom
@@ -9,6 +9,7 @@ from core import Atom, Keyword, List, Vector
 #       | integer
 #       | list
 #       | vector
+#       | map
 #       | nil
 # sexprs : sexpr
 #        | sexprs sexpr
@@ -39,10 +40,11 @@ def lispparser():
         'sexpr : INTEGER'
         p[0] = int(p[1])
 
-    def p_sexpr_list(p):
+    def p_sexpr_seq(p):
         '''
         sexpr : list
               | vector
+              | map
         '''
         p[0] = p[1]
 
@@ -80,6 +82,16 @@ def lispparser():
     def p_empty_vector(p):
         'vector : LBRACKET RBRACKET'
         p[0] = Vector()
+
+    def p_map(p):
+        'map : LBRACE sexpr sexpr RBRACE'
+        m = Map()
+        m[p[2]] = p[3]
+        p[0] = m
+
+    def p_empty_map(p):
+        'map : LBRACE RBRACE'
+        p[0] = Map()
 
     def p_error(p):
         if p:
