@@ -32,8 +32,7 @@ Feel free to join in!
 
 DONE
 
-- Parsing and storage of trees of lists, vectors, atoms, integers,
-  and integers
+- Parsing and storage of trees of lists, vectors, atoms, and integers
 - 'def' and simple evaluation
 - A few builtin functions
 
