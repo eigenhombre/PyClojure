@@ -25,8 +25,8 @@ syntactic goodness, as well as immutable data structures, which can
 coexist with Python and make use of its extensive, 'batteries included'
 libraries.
 
-There has been some discussion[4] as well getting Clojure running under
-PyPy, something which I think would be quite interesting.
+There has been some discussion[4] as well about getting Clojure running
+under PyPy, something which I think would be quite interesting.
 
 Feel free to join in!
 
