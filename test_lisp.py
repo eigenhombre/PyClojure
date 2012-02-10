@@ -92,6 +92,7 @@ def test_eval():
     assert evalparse("(+ 1 2 3 4)") == 10
     assert evalparse("(*)") == 1
     assert evalparse("(* 1 2 3 4 5)") == 120
+    assert evalparse("(+ 2 (+ 2 3))") == 7
 
 def test_to_string():
     parse = lispparser()

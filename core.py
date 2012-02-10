@@ -114,5 +114,6 @@ def evaluate(x, scopes):
                 scopes[-1][atom.name()] = evaluate(rhs, scopes)
                 return atom
             elif name in builtins:
-                return builtins[name](contents[1:])
+                return builtins[name]([evaluate(x, scopes)
+                                       for x in contents[1:]])
     return x
