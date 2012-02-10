@@ -3,8 +3,8 @@ Author: John Jacobsen, NPX Designs, Inc. john@mail.npxdesigns.com
 Started: December, 2011
 
 This project consists of the very first steps of an implementation of
-the Clojure language in Python.  At the moment it is interpreted and
-does very little (see file test_lisp.py for examples).  I probably
+the Clojure language in Python.  At the moment it is merely interpreted
+and does very little (see file test_lisp.py for examples).  I probably
 shouldn't even call it PyClojure at this point, but the name at least
 serves to indicate my intentions....
 
