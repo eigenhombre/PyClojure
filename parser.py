@@ -6,6 +6,7 @@ from core import Atom, Keyword, List, Vector, Map
 # BNF grammar for 'lisp'
 # sexpr : atom
 #       | keyword
+#       | float
 #       | integer
 #       | list
 #       | vector
@@ -35,6 +36,10 @@ def lispparser():
     def p_keyword(p):
         'sexpr : KEYWORD'
         p[0] = Keyword(p[1])
+
+    def p_sexpr_float(p):
+        'sexpr : FLOAT'
+        p[0] = float(p[1])
 
     def p_sexpr_integer(p):
         'sexpr : INTEGER'
@@ -100,4 +105,3 @@ def lispparser():
             print("EOF","Syntax error. No more input.")
 
     return yacc.yacc(errorlog=LispLogger(sys.stderr)).parse
-

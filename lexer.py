@@ -3,7 +3,7 @@ import ply.lex as lex
 reserved = {'nil': 'NIL'}
 
 tokens = ['ATOM', 'KEYWORD',
-          'INTEGER',
+          'FLOAT', 'INTEGER',
           'LBRACKET', 'RBRACKET',
           'LBRACE', 'RBRACE',
           'LPAREN', 'RPAREN'] + list(reserved.values())
@@ -21,6 +21,10 @@ def lisplexer():
     def t_KEYWORD(t):
         r'\:[a-zA-Z_-]+'
         t.value = t.value[1:]
+        return t
+
+    def t_FLOAT(t):
+        r'[-+]?([0-9]*\.[0-9]+|[0-9]+\.)'
         return t
 
     def t_INTEGER(t):
