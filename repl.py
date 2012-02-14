@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from lexer import PyClojureLex
-from parser import lispparser
+from parser import PyClojureParse
 from core import evaluate, tostring, Scope
 import re
 
@@ -22,7 +22,7 @@ else:
     atexit.register(readline.write_history_file, histfile)
 
 lexer = PyClojureLex().build()
-parse = lispparser()
+parser = PyClojureParse().build()
 
 if __name__ == "__main__":
     global_scope = Scope()
@@ -33,7 +33,8 @@ if __name__ == "__main__":
             if re.search('^\s*$', txt):
                 continue
             else:
-                print(tostring(evaluate(parse(txt, lexer=lexer), scopechain)))
+                print(tostring(evaluate(
+                            parser.parse(txt, lexer=lexer), scopechain)))
         except (EOFError, KeyboardInterrupt):
             print
             break
