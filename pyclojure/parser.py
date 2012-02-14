@@ -1,7 +1,7 @@
 import sys
 import ply.yacc as yacc
-from lexer import tokens
-from core import Atom, Keyword, List, Vector, Map
+from pyclojure.lexer import tokens
+from pyclojure.core import Atom, Keyword, List, Vector, Map
 
 # BNF grammar for 'lisp'
 # sexpr : atom

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from lexer import lisplexer
-from parser import lispparser
-from core import evaluate, tostring, Scope
 import re
+from pyclojure.lexer import lisplexer
+from pyclojure.parser import lispparser
+from pyclojure.core import evaluate, tostring, Scope
 
 
 parse = lispparser()

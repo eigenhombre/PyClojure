@@ -1,7 +1,7 @@
-from lexer import lisplexer  # Need tokens for parser
-from parser import lispparser
-from core import (Atom, Keyword, Vector, List, Map, Scope, evaluate, tostring,
-                  UnknownVariable, builtins)
+from pyclojure.lexer import lisplexer  # Need tokens for parser
+from pyclojure.parser import lispparser
+from pyclojure.core import (Atom, Keyword, Vector, List, Map, Scope, evaluate, tostring,
+                            UnknownVariable, builtins)
 
 
 def test_builtins():
