@@ -19,8 +19,10 @@ if __name__ == "__main__":
                 continue
             else:
                 print(tostring(evaluate(parse(txt), scopechain)))
-        except (EOFError, KeyboardInterrupt):
-            print
+        except EOFError:
+            break
+        except KeyboardInterrupt:
+            print  # Give user a newline after Cntrl-C for readability
             break
         except Exception, e:
             print e
