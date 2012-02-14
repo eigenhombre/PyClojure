@@ -1,6 +1,6 @@
 import sys
 import ply.yacc as yacc
-from lexer import tokens
+from lexer import PyClojureLex
 from core import Atom, Keyword, List, Vector, Map
 
 # BNF grammar for 'lisp'
@@ -25,6 +25,8 @@ class LispLogger(yacc.PlyLogger):
             super(type(self), self).debug(*args, **kwargs)
 
 def lispparser():
+    tokens = PyClojureLex.tokens
+
     def p_sexpr_nil(p):
         'sexpr : NIL'
         p[0] = None
