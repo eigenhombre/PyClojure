@@ -105,11 +105,11 @@ def tostring(x):
         raise TypeError('%s is unknown!' % x)
 
 
-def plus(args=[]):
+def plus(args=()):
     return reduce(operator.add, args, 0)
 
 
-def times(args=[]):
+def times(args=()):
     return reduce(operator.mul, args, 1)
 
 
