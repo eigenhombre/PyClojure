@@ -84,9 +84,7 @@ def find_in_scopechain(scopes, name):
 def tostring(x):
     if x is None:
         return 'nil'
-    elif type(x) is int:
-        return str(x)
-    elif type(x) is float:
+    elif type(x) in (int, float):
         return str(x)
     elif type(x) is Atom:
         return x.name()
@@ -118,7 +116,7 @@ builtins = {'+': plus,
 
 
 def evaluate(x, scopes):
-    if type(x) is int:
+    if type(x) in (int, float):
         return x
     elif type(x) is Atom:
         return find_in_scopechain(scopes, x.name())
