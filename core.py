@@ -86,6 +86,8 @@ def tostring(x):
         return 'nil'
     elif type(x) is int:
         return str(x)
+    elif type(x) is float:
+        return str(x)
     elif type(x) is Atom:
         return x.name()
     elif type(x) is Keyword:
