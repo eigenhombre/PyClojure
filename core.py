@@ -64,8 +64,44 @@ class Keyword(ComparableExpr):
         return ":"+self.name
 
 
+class Function(ComparableExpr):
+    pass
+
+
+class PythonFunction(Function):
+    def __init__(self, func):
+        self.func = func
+
+    def call(self, args):
+        return self.func(*args)
+
+    def __repr__(self):
+        return "PYTHONFUNCTION(%s)" % self.func.__name__
+
+
 class Scope(dict):
     pass
+
+
+class GlobalScope(Scope):
+    def __init__(self, *args, **kwargs):
+        Scope.__init__(self, *args, **kwargs)
+        # Get all builtin python functions
+        python_functions = [(name, PythonFunction(obj)) for name, obj\
+                                in __builtins__.items() if\
+                                type(abs) == type(obj)]
+        self.update(python_functions)
+
+        operators = {'+': 'add',
+                     '-': 'sub',
+                     '*': 'mul',
+                     '/': 'div',
+                     '!': 'inv',
+                     '==': 'eq',
+                     }
+        operator_funcs = [(symbol, PythonFunction(getattr(operator, name))) for\
+                              symbol, name in operators.items()]
+        self.update(operator_funcs)
 
 
 class UnknownVariable(Exception):
@@ -78,7 +114,6 @@ def find_in_scopechain(scopes, name):
             return scope[name]
         except:
             pass
-    raise UnknownVariable("Unknown variable: %s" % name)
 
 
 def tostring(x):
@@ -111,15 +146,13 @@ def times(args=()):
     return reduce(operator.mul, args, 1)
 
 
-builtins = {'+': plus,
-            '*': times}
-
-
 def evaluate(x, scopes):
     if type(x) in (int, float):
         return x
     elif type(x) is Atom:
-        return find_in_scopechain(scopes, x.name())
+        val = find_in_scopechain(scopes, x.name())
+        if not val:
+            raise UnknownVariable("Unknown variable: %s" % x.name())
     elif type(x) is Keyword:
         return x
     elif type(x) is Vector:
@@ -138,7 +171,10 @@ def evaluate(x, scopes):
                                     tostring(atom))
                 scopes[-1][atom.name()] = evaluate(rhs, scopes)
                 return atom
-            elif name in builtins:
-                return builtins[name]([evaluate(x, scopes)
-                                       for x in contents[1:]])
+            elif find_in_scopechain(scopes, name):
+                val = find_in_scopechain(scopes, name)
+                if issubclass(type(val), Function):
+                    args = map((lambda obj: evaluate(obj, scopes)),
+                               contents[1:])
+                    return val.call(args)
     return x

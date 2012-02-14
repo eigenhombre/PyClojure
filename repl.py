@@ -2,7 +2,7 @@
 
 from lexer import PyClojureLex
 from parser import PyClojureParse
-from core import evaluate, tostring, Scope
+from core import evaluate, tostring, GlobalScope
 import re
 
 try:
@@ -25,7 +25,7 @@ lexer = PyClojureLex().build()
 parser = PyClojureParse().build()
 
 if __name__ == "__main__":
-    global_scope = Scope()
+    global_scope = GlobalScope()
     scopechain = [global_scope]
     while True:
         try:
