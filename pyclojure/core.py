@@ -8,8 +8,11 @@ class ComparableExpr(object):
 
 
 class Map(ComparableExpr):
-    def __init__(self, **kwargs):
-        self.__dict = kwargs
+    def __init__(self, *args, **kwargs):
+        if len(args) == 1 and not kwargs:
+            self.__dict = args[0]
+        else:
+            self.__dict = kwargs
 
     def __getitem__(self, name):
         return self.__dict[name]
@@ -23,6 +26,11 @@ class Map(ComparableExpr):
     def items(self):
         return self.__dict.items()
 
+    def keys(self):
+        return self.__dict.keys()
+
+    def values(self):
+        return self.__dict.values()
 
 class Atom(ComparableExpr):
     def __init__(self, name=None, value=None):
@@ -108,6 +116,10 @@ class UnknownVariable(Exception):
     pass
 
 
+class TypeError(Exception):
+    pass
+
+
 def find_in_scopechain(scopes, name):
     for scope in reversed(scopes):
         try:
@@ -132,7 +144,7 @@ def tostring(x):
         inner = ' '.join([tostring(x) for x in x.contents()])
         return '[%s]' % inner
     elif type(x) is Map:
-        inner = ','.join(['%s %s' % (k, v) for k,v in x.items()])
+        inner = ', '.join(['%s %s' % (k, v) for k,v in x.items()])
         return '{%s}' % inner
     else:
         raise TypeError('%s is unknown!' % x)
@@ -157,6 +169,9 @@ def evaluate(x, scopes):
         return x
     elif type(x) is Vector:
         return apply(Vector, [evaluate(el, scopes) for el in x.contents()])
+    elif type(x) is Map:
+        return Map(dict([(evaluate(k, scopes), evaluate(v, scopes))
+                         for k, v in x.items()]))
     elif type(x) is List:
         contents = x.contents()
         if len(contents) == 0:
@@ -177,4 +192,13 @@ def evaluate(x, scopes):
                     args = map((lambda obj: evaluate(obj, scopes)),
                                contents[1:])
                     return val.call(args)
+                else:
+                    raise TypeError("%s is not callable" % tostring(val))
+            else:
+                raise UnknownVariable("Function %s is unknown!" % name)
+        elif type(first) is Map:
+            return evaluate(first, scopes)[evaluate(contents[1], scopes)]
+        else:
+            raise SyntaxError("%s is not a function or special form!"
+                              % first)
     return x

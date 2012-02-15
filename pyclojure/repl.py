@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
-from lexer import PyClojureLex
-from parser import PyClojureParse
-from core import evaluate, tostring, GlobalScope
 import re
+import sys
+
+from pyclojure.lexer import PyClojureLex
+from pyclojure.parser import PyClojureParse
+from pyclojure.core import evaluate, tostring, GlobalScope
 
 try:
     import readline
@@ -24,7 +26,7 @@ else:
 lexer = PyClojureLex().build()
 parser = PyClojureParse().build()
 
-if __name__ == "__main__":
+def main():
     global_scope = GlobalScope()
     scopechain = [global_scope]
     while True:
@@ -35,8 +37,16 @@ if __name__ == "__main__":
             else:
                 print(tostring(evaluate(
                             parser.parse(txt, lexer=lexer), scopechain)))
-        except (EOFError, KeyboardInterrupt):
-            print
+        except EOFError:
+            break
+        except KeyboardInterrupt:
+            print  # Give user a newline after Cntrl-C for readability
             break
         except Exception, e:
             print e
+            return 1
+
+if __name__ == "__main__":
+    exit_code = main()
+    if exit_code:
+        sys.exit(exit_code)

@@ -1,7 +1,7 @@
-from lexer import lisplexer  # Need tokens for parser
-from parser import lispparser
-from core import (Atom, Keyword, Vector, List, Map, Scope, evaluate, tostring,
-                  UnknownVariable, builtins)
+from pyclojure.lexer import lisplexer  # Need tokens for parser
+from pyclojure.parser import lispparser
+from pyclojure.core import (Atom, Keyword, Vector, List, Map, Scope, evaluate, tostring,
+                            UnknownVariable, builtins)
 
 
 def test_builtins():
@@ -64,6 +64,7 @@ def test_core():
     assert Keyword("a") != Keyword("b")
     Map()
     Map(x=1)
+    assert Map(x=1).keys() == ['x']
     assert Map(x=1) == Map(x=1)
     assert Map(x=1) != Map(x=2)
     assert Map(x=1) != Map(x=1, a=3)
@@ -87,10 +88,15 @@ def test_eval():
     m[1] = 2
     assert evalparse("{1 2}") == m
     m[3] = 4
-    #assert evalparse("{1 2, 3 4}") == m <-- Get this working next
+    assert evalparse("{1 2, 3 4}") == m
 
     try:
         evalparse("a")
+        assert False, "UnknownVariable exception not raised!"
+    except UnknownVariable:
+        pass
+    try:
+        evalparse("(x)")
         assert False, "UnknownVariable exception not raised!"
     except UnknownVariable:
         pass
@@ -107,6 +113,13 @@ def test_eval():
     assert evalparse("(*)") == 1
     assert evalparse("(* 1 2 3 4 5)") == 120
     assert evalparse("(+ 2 (+ 2 3))") == 7
+    assert evalparse("{}") == Map()
+    assert evalparse("{1 2}") == Map({1: 2})
+    assert evalparse("({1 2} 1)") == 2
+    assert evalparse("({a 1} 666)") == 1
+    assert evalparse("({666 1} a)") == 1
+    assert evalparse("({a 2 3 a} a)") == 2
+    assert evalparse("({a 2 3 a} 3)") == 666
 
 
 def test_to_string():
@@ -121,7 +134,7 @@ def test_to_string():
     assert tostring(parse(":a")) == ":a"
     assert tostring(parse("{}")) == "{}"
     assert tostring(parse("{1 2}")) == "{1 2}"
-    #assert tostring(parse("{1 2, 3 4}")) == "{1 2, 3 4}"
+    assert tostring(parse("{1 2 3 4}")) == "{1 2, 3 4}"
 
 
 def test_scope():

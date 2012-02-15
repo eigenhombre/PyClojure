@@ -1,7 +1,7 @@
 import sys
 import ply.yacc as yacc
-from lexer import PyClojureLex
-from core import Atom, Keyword, List, Vector, Map
+from pyclojure.lexer import PyClojureLex
+from pyclojure.core import Atom, Keyword, List, Vector, Map
 
 # BNF grammar for 'lisp'
 # sexpr : atom
@@ -23,6 +23,13 @@ class LispLogger(yacc.PlyLogger):
     def debug(self, *args, **kwargs):
         if not _quiet:
             super(type(self), self).debug(*args, **kwargs)
+
+def make_map(args):
+    m = Map()
+    kvlist = [(args[i], args[i+1]) for i in range(0, len(args), 2)]
+    for k, v in kvlist:
+        m[k] = v
+    return m
 
 class PyClojureParse(object):
     def build(self):
@@ -95,9 +102,7 @@ class PyClojureParse(object):
 
     def p_map(self, p):
         'map : LBRACE sexpr sexpr RBRACE'
-        m = Map()
-        m[p[2]] = p[3]
-        p[0] = m
+        p[0] = make_map(p[2])
 
     def p_empty_map(self, p):
         'map : LBRACE RBRACE'
