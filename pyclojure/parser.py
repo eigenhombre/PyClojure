@@ -36,6 +36,8 @@ class PyClojureParse(object):
         return yacc.yacc(module=self, errorlog=LispLogger(sys.stderr))
 
     tokens = PyClojureLex.tokens
+    tokens.remove('NUMBER')
+    tokens.extend(('FLOAT', 'INTEGER'))
 
     def p_sexpr_nil(self, p):
         'sexpr : NIL'

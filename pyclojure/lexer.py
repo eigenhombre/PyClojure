@@ -8,7 +8,7 @@ class PyClojureLex(object):
     reserved = {'nil': 'NIL'}
 
     tokens = ['ATOM', 'KEYWORD',
-              'FLOAT', 'INTEGER',
+              'NUMBER',
               'LBRACKET', 'RBRACKET',
               'LBRACE', 'RBRACE',
               'LPAREN', 'RPAREN'] + list(reserved.values())
@@ -27,12 +27,13 @@ class PyClojureLex(object):
         t.value = t.value[1:]
         return t
 
-    def t_FLOAT(self, t):
-        r'[-+]?([0-9]*\.[0-9]+|[0-9]+\.)'
-        return t
-
-    def t_INTEGER(self, t):
-        r'[0-9]+'
+    def t_NUMBER(self, t):
+        r'[+-]?((\d+(\.\d+)?([eE][+-]?\d+)?)|(\.\d+([eE][+-]?\d+)?))'
+        val = t.value
+        if '.' in val or 'e' in val.lower():
+            t.type = 'FLOAT'
+        else:
+            t.type = 'INTEGER'
         return t
 
     def t_ATOM(self, t):
