@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 from os.path import exists
-from setuptools import setup
+try:
+    # Use setup() from setuptools(/distribute) if available
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
 from pyclojure import __version__
 
 setup(
