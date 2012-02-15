@@ -157,6 +157,8 @@ def evaluate(x, scopes):
         val = find_in_scopechain(scopes, x.name())
         if not val:
             raise UnknownVariable("Unknown variable: %s" % x.name())
+        else:
+            return val
     elif type(x) is Keyword:
         return x
     elif type(x) is Vector:
