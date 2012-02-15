@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from lexer import lisplexer
-from parser import lispparser
-from core import evaluate, tostring, Scope
 import re
+import sys
+from pyclojure.lexer import lisplexer
+from pyclojure.parser import lispparser
+from pyclojure.core import evaluate, tostring, Scope
 
 try:
     import readline
@@ -24,7 +25,7 @@ else:
 parse = lispparser()
 lexer = lisplexer()
 
-if __name__ == "__main__":
+def main():
     global_scope = Scope()
     scopechain = [global_scope]
     while True:
@@ -41,3 +42,9 @@ if __name__ == "__main__":
             break
         except Exception, e:
             print e
+            return 1
+
+if __name__ == "__main__":
+    exit_code = main()
+    if exit_code:
+        sys.exit(exit_code)
