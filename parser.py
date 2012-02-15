@@ -23,6 +23,15 @@ class LispLogger(yacc.PlyLogger):
         if not _quiet:
             super(type(self), self).debug(*args, **kwargs)
 
+
+def make_map(args):
+    m = Map()
+    kvlist = [(args[i], args[i+1]) for i in range(0, len(args), 2)]
+    for k, v in kvlist:
+        m[k] = v
+    return m
+
+
 def lispparser():
     def p_sexpr_nil(p):
         'sexpr : NIL'
@@ -84,10 +93,8 @@ def lispparser():
         p[0] = Vector()
 
     def p_map(p):
-        'map : LBRACE sexpr sexpr RBRACE'
-        m = Map()
-        m[p[2]] = p[3]
-        p[0] = m
+        'map : LBRACE sexprs RBRACE'
+        p[0] = make_map(p[2])
 
     def p_empty_map(p):
         'map : LBRACE RBRACE'

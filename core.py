@@ -97,7 +97,7 @@ def tostring(x):
         inner = ' '.join([tostring(x) for x in x.contents()])
         return '[%s]' % inner
     elif type(x) is Map:
-        inner = ','.join(['%s %s' % (k, v) for k,v in x.items()])
+        inner = ', '.join(['%s %s' % (k, v) for k,v in x.items()])
         return '{%s}' % inner
     else:
         raise TypeError('%s is unknown!' % x)
@@ -141,4 +141,9 @@ def evaluate(x, scopes):
             elif name in builtins:
                 return builtins[name]([evaluate(x, scopes)
                                        for x in contents[1:]])
+            else:
+                raise UnknownVariable("Function %s is unknown!" % name)
+        else:
+            raise SyntaxError("%s is not a function or special form!"
+                              % first)
     return x

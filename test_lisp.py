@@ -87,10 +87,15 @@ def test_eval():
     m[1] = 2
     assert evalparse("{1 2}") == m
     m[3] = 4
-    #assert evalparse("{1 2, 3 4}") == m <-- Get this working next
+    assert evalparse("{1 2, 3 4}") == m
 
     try:
         evalparse("a")
+        assert False, "UnknownVariable exception not raised!"
+    except UnknownVariable:
+        pass
+    try:
+        evalparse("(x)")
         assert False, "UnknownVariable exception not raised!"
     except UnknownVariable:
         pass
@@ -107,6 +112,7 @@ def test_eval():
     assert evalparse("(*)") == 1
     assert evalparse("(* 1 2 3 4 5)") == 120
     assert evalparse("(+ 2 (+ 2 3))") == 7
+    assert evalparse("{}") == Map()
 
 
 def test_to_string():
@@ -121,7 +127,7 @@ def test_to_string():
     assert tostring(parse(":a")) == ":a"
     assert tostring(parse("{}")) == "{}"
     assert tostring(parse("{1 2}")) == "{1 2}"
-    #assert tostring(parse("{1 2, 3 4}")) == "{1 2, 3 4}"
+    assert tostring(parse("{1 2, 3 4}")) == "{1 2, 3 4}"
 
 
 def test_scope():
