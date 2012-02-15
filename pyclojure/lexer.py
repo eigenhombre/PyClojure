@@ -3,6 +3,7 @@ import ply.lex as lex
 class PyClojureLex(object):
     def build(self,**kwargs):
         self.lexer = lex.lex(module=self, **kwargs)
+        return self.lexer
 
     reserved = {'nil': 'NIL'}
 
