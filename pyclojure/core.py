@@ -150,14 +150,6 @@ def tostring(x):
         raise TypeError('%s is unknown!' % x)
 
 
-def plus(args=()):
-    return reduce(operator.add, args, 0)
-
-
-def times(args=()):
-    return reduce(operator.mul, args, 1)
-
-
 def evaluate(x, scopes):
     if type(x) in (int, float):
         return x
