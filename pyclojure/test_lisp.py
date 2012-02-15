@@ -1,19 +1,12 @@
-from pyclojure.lexer import lisplexer  # Need tokens for parser
-from pyclojure.parser import lispparser
+from pyclojure.lexer import PyClojureLex  # Need tokens for parser
+from pyclojure.parser import PyClojureParse
 from pyclojure.core import (Atom, Keyword, Vector, List, Map, Scope, evaluate, tostring,
-                            UnknownVariable, builtins)
-
-
-def test_builtins():
-    assert builtins['+']() == 0
-    assert builtins['+']([2, 2]) == 4
-    assert builtins['*']() == 1
-    assert builtins['*']([1, 2, 3]) == 6
+                            UnknownVariable)
 
 
 def test_lexer():
-    lexer = lisplexer()
-    lexer.input("""(a 
+    lexer = PyClojureLex().build()
+    lexer.input("""(a
                       (nested) list (of 534 atoms [and :symbols]
                           (and lists)))  ;; with comments
                 """)
@@ -23,7 +16,7 @@ def test_lexer():
 
 
 def test_parser():
-    parse = lispparser()
+    parse = PyClojureParse().build().parse
     assert parse("an_atom") == Atom('an_atom')
     assert parse("(simple_list)") == List(Atom('simple_list'))
     assert parse('(two elements)') == List(Atom('two'),
@@ -73,7 +66,7 @@ def test_core():
 
 
 def test_eval():
-    parse = lispparser()
+    parse = PyClojureParse().build().parse
     scopechain = [Scope()]
     def evalparse(x):
         return evaluate(parse(x), scopechain)
@@ -123,7 +116,7 @@ def test_eval():
 
 
 def test_to_string():
-    parse = lispparser()
+    parse = PyClojureParse().build().parse
     assert tostring(parse("nil")) =="nil"
     assert tostring(parse("666")) =="666"
     assert tostring(parse("()")) == "()"
