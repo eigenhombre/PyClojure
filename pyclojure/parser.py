@@ -103,7 +103,7 @@ class PyClojureParse(object):
         p[0] = Vector()
 
     def p_map(self, p):
-        'map : LBRACE sexpr sexpr RBRACE'
+        'map : LBRACE sexprs RBRACE'
         p[0] = make_map(p[2])
 
     def p_empty_map(self, p):
