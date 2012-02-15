@@ -1,7 +1,7 @@
 from pyclojure.lexer import PyClojureLex  # Need tokens for parser
 from pyclojure.parser import PyClojureParse
-from pyclojure.core import (Atom, Keyword, Vector, List, Map, Scope, evaluate, tostring,
-                            UnknownVariable)
+from pyclojure.core import (Atom, Keyword, Vector, List, Map, Scope, evaluate,
+                            tostring, UnknownVariable, GlobalScope)
 
 
 def test_lexer():
@@ -67,11 +67,11 @@ def test_core():
 
 def test_eval():
     parse = PyClojureParse().build().parse
-    scopechain = [Scope()]
+    scopechain = [GlobalScope()]
     def evalparse(x):
         return evaluate(parse(x), scopechain)
     assert evalparse("666") == 666
-    assert evalparse("666") == 666
+    assert evalparse("6.66") == 6.66
     assert evalparse("nil") == None
     assert evalparse("()") == List()
     assert evalparse("[]") == Vector()
@@ -114,11 +114,25 @@ def test_eval():
     assert evalparse("({a 2 3 a} a)") == 2
     assert evalparse("({a 2 3 a} 3)") == 666
 
+def test_function_calling():
+    parse = PyClojureParse().build().parse
+    scopechain = [GlobalScope()]
+    def evalparse(x):
+        return evaluate(parse(x), scopechain)
+    # Test builtin python function calling
+    assert evalparse("(abs (- 0 100))") == 100
+    assert evalparse("(round 3.3)") == 3.0
+
 
 def test_to_string():
     parse = PyClojureParse().build().parse
     assert tostring(parse("nil")) =="nil"
     assert tostring(parse("666")) =="666"
+    assert tostring(parse("6.66")) == "6.66"
+    assert tostring(parse("666e-3")) == "6.66"
+    assert tostring(parse("-666")) =="-666"
+    assert tostring(parse("-6.66")) == "-6.66"
+    assert tostring(parse("-666e-3")) == "-6.66"
     assert tostring(parse("()")) == "()"
     assert tostring(parse("(a)")) == "(a)"
     assert tostring(parse("(a b)")) == "(a b)"
