@@ -100,16 +100,24 @@ class GlobalScope(Scope):
                                 type(abs) == type(obj)]
         self.update(python_functions)
 
-        operators = {'+': 'add',
-                     '-': 'sub',
-                     '*': 'mul',
-                     '/': 'div',
-                     '!': 'inv',
-                     '==': 'eq',
-                     }
-        operator_funcs = [(symbol, PythonFunction(getattr(operator, name))) for\
-                              symbol, name in operators.items()]
-        self.update(operator_funcs)
+        # These functions take a variable number of arguments
+        variadic_operators = {'+': ('add', 0),
+                              '-': ('sub', 0),
+                              '*': ('mul', 1),
+                              '/': ('div', 1)}
+        def variadic_generator(fname, default):
+            func = getattr(operator, fname)
+            return PythonFunction(
+                lambda *args: reduce(func, args) if args else default)
+        for name, info in variadic_operators.items():
+            self[name] = variadic_generator(*info)
+
+        non_variadic_operators = {
+            '!': operator.inv,
+            '==': operator.eq,
+            }
+        self.update((name, PythonFunction(func)) for name, func in\
+                        non_variadic_operators.items())
 
 
 class UnknownVariable(Exception):
