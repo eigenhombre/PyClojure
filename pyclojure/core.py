@@ -176,31 +176,35 @@ def evaluate(x, scopes):
                          for k, v in x.items()]))
     elif type(x) is List:
         contents = x.contents()
-        if len(contents) == 0:
-            return x  # ()
-        first = contents[0]
-        if type(first) is Atom:
-            name = first.name()
-            if name == "def":
-                atom, rhs = contents[1:3]
-                if type(atom) is not Atom:
-                    raise TypeError("%s is not the name of an atom!" %
-                                    tostring(atom))
-                scopes[-1][atom.name()] = evaluate(rhs, scopes)
-                return atom
-            elif find_in_scopechain(scopes, name):
-                val = find_in_scopechain(scopes, name)
-                if issubclass(type(val), Function):
-                    args = map((lambda obj: evaluate(obj, scopes)),
-                               contents[1:])
-                    return val.call(args)
-                else:
-                    raise TypeError("%s is not callable" % tostring(val))
-            else:
-                raise UnknownVariable("Function %s is unknown!" % name)
-        elif type(first) is Map:
-            return evaluate(first, scopes)[evaluate(contents[1], scopes)]
-        else:
-            raise SyntaxError("%s is not a function or special form!"
-                              % first)
+        return eval_list(contents, scopes)
     return x
+
+
+def eval_list(contents, scopes):
+    if len(contents) == 0:
+        return List()  # ()
+    first = contents[0]
+    rest = contents[1:]
+    if type(first) is Map:
+        if len(rest) != 1:
+            raise TypeError("Map lookup takes one argument")
+        return evaluate(first, scopes)[evaluate(rest[0], scopes)]
+    elif type(first) is Atom:
+        name = first.name()
+        if name == "def":
+            if len(rest) != 2:
+                raise TypeError("def takes two arguments")
+            atom, rhs = rest[0:2]
+            if type(atom) is not Atom:
+                raise TypeError("First argument to def must be atom")
+            scopes[-1][atom.name()] = evaluate(rhs, scopes)
+            return
+        else:
+            val = find_in_scopechain(scopes, name)
+            if not val:
+                raise UnknownVariable("Function %s is unknown")
+            if issubclass(type(val), Function):
+                args = map((lambda obj: evaluate(obj, scopes)), rest)
+                return val.call(args)
+            else:
+                raise TypeError("%s is not callable" % name)
