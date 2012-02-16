@@ -1,4 +1,5 @@
-Author: John Jacobsen, NPX Designs, Inc. john@mail.npxdesigns.com
+Primary contact: John Jacobsen, NPX Designs, Inc. john@mail.npxdesigns.com
+(See AUTHORS for complete list of contributors)
 
 Started: December, 2011
 
@@ -34,9 +35,9 @@ Feel free to join in!  For next steps, see Issues list on GitHub.
 WHAT'S THERE NOW:
 
 - REPL with history and readline support
-- Parsing and storage of trees of lists, vectors, atoms, and integers
+- Parsing and storage of trees of lists, vectors, atoms, integers, floats
 - 'def' and simple evaluation
-- A few builtin functions
+- A few builtin functions and access to functions in Python's main namespace
 - setup.py packaging
 
 
