@@ -34,6 +34,7 @@ def test_reader_macros():
     assert parse("@a") == parse("(deref a)")
     assert parse("'a") == parse("(quote a)")
     assert parse("(.float 3)") == parse("(float 3)")
+    assert parse("'(1 2 3)") == parse("(quote (1 2 3))")
 
 
 def test_core():
