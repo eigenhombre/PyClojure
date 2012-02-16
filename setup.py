@@ -23,7 +23,6 @@ setup(
     description='Clojure implemented on top of Python',
     long_description=open('README').read() if exists("README") else "",
     entry_points=dict(console_scripts=['pyclojure=pyclojure.repl:main']),
-    # Any requirements here, e.g. "Django >= 1.1.1"
     install_requires=[
         'ply>=3.4',
     ],
