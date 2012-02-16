@@ -72,11 +72,59 @@ class Keyword(ComparableExpr):
         return ":"+self.name
 
 
+class Function(ComparableExpr):
+    pass
+
+
+class PythonFunction(Function):
+    def __init__(self, func):
+        self.func = func
+
+    def call(self, args):
+        return self.func(*args)
+
+    def __repr__(self):
+        return "PYTHONFUNCTION(%s)" % self.func.__name__
+
+
 class Scope(dict):
     pass
 
 
+class GlobalScope(Scope):
+    def __init__(self, *args, **kwargs):
+        Scope.__init__(self, *args, **kwargs)
+        # Get all builtin python functions
+        python_functions = [(name, PythonFunction(obj)) for name, obj\
+                                in __builtins__.items() if\
+                                type(abs) == type(obj)]
+        self.update(python_functions)
+
+        # These functions take a variable number of arguments
+        variadic_operators = {'+': ('add', 0),
+                              '-': ('sub', 0),
+                              '*': ('mul', 1),
+                              '/': ('div', 1)}
+        def variadic_generator(fname, default):
+            func = getattr(operator, fname)
+            return PythonFunction(
+                lambda *args: reduce(func, args) if args else default)
+        for name, info in variadic_operators.items():
+            self[name] = variadic_generator(*info)
+
+        non_variadic_operators = {
+            '!': operator.inv,
+            '==': operator.eq,
+            }
+        self.update((name, PythonFunction(func)) for name, func in\
+                        non_variadic_operators.items())
+
+
 class UnknownVariable(Exception):
+    pass
+
+
+class TypeError(Exception):
     pass
 
 
@@ -86,13 +134,12 @@ def find_in_scopechain(scopes, name):
             return scope[name]
         except:
             pass
-    raise UnknownVariable("Unknown variable: %s" % name)
 
 
 def tostring(x):
     if x is None:
         return 'nil'
-    elif type(x) is int:
+    elif type(x) in (int, float):
         return str(x)
     elif type(x) is Atom:
         return x.name()
@@ -111,23 +158,15 @@ def tostring(x):
         raise TypeError('%s is unknown!' % x)
 
 
-def plus(args=[]):
-    return reduce(operator.add, args, 0)
-
-
-def times(args=[]):
-    return reduce(operator.mul, args, 1)
-
-
-builtins = {'+': plus,
-            '*': times}
-
-
 def evaluate(x, scopes):
-    if type(x) is int:
+    if type(x) in (int, float):
         return x
     elif type(x) is Atom:
-        return find_in_scopechain(scopes, x.name())
+        val = find_in_scopechain(scopes, x.name())
+        if not val:
+            raise UnknownVariable("Unknown variable: %s" % x.name())
+        else:
+            return val
     elif type(x) is Keyword:
         return x
     elif type(x) is Vector:
@@ -149,9 +188,14 @@ def evaluate(x, scopes):
                                     tostring(atom))
                 scopes[-1][atom.name()] = evaluate(rhs, scopes)
                 return atom
-            elif name in builtins:
-                return builtins[name]([evaluate(x, scopes)
-                                       for x in contents[1:]])
+            elif find_in_scopechain(scopes, name):
+                val = find_in_scopechain(scopes, name)
+                if issubclass(type(val), Function):
+                    args = map((lambda obj: evaluate(obj, scopes)),
+                               contents[1:])
+                    return val.call(args)
+                else:
+                    raise TypeError("%s is not callable" % tostring(val))
             else:
                 raise UnknownVariable("Function %s is unknown!" % name)
         elif type(first) is Map:

@@ -1,14 +1,18 @@
 import ply.lex as lex
 
-reserved = {'nil': 'NIL'}
+class PyClojureLex(object):
+    def build(self,**kwargs):
+        self.lexer = lex.lex(module=self, **kwargs)
+        return self.lexer
 
-tokens = ['ATOM', 'KEYWORD',
-          'INTEGER',
-          'LBRACKET', 'RBRACKET',
-          'LBRACE', 'RBRACE',
-          'LPAREN', 'RPAREN'] + list(reserved.values())
+    reserved = {'nil': 'NIL'}
 
-def lisplexer():
+    tokens = ['ATOM', 'KEYWORD',
+              'NUMBER',
+              'LBRACKET', 'RBRACKET',
+              'LBRACE', 'RBRACE',
+              'LPAREN', 'RPAREN'] + list(reserved.values())
+
     t_LPAREN = r'\('
     t_RPAREN = r'\)'
     t_LBRACKET = r'\['
@@ -18,26 +22,29 @@ def lisplexer():
     t_ignore = ' ,\t\r'
     t_ignore_COMMENT = r'\;.*'
 
-    def t_KEYWORD(t):
+    def t_KEYWORD(self, t):
         r'\:[a-zA-Z_-]+'
         t.value = t.value[1:]
         return t
 
-    def t_INTEGER(t):
-        r'[0-9]+'
+    def t_NUMBER(self, t):
+        r'[+-]?((\d+(\.\d+)?([eE][+-]?\d+)?)|(\.\d+([eE][+-]?\d+)?))'
+        val = t.value
+        if '.' in val or 'e' in val.lower():
+            t.type = 'FLOAT'
+        else:
+            t.type = 'INTEGER'
         return t
 
-    def t_ATOM(t):
+    def t_ATOM(self, t):
         r'[\*\+\!\-\_a-zA-Z_-]+'
-        t.type = reserved.get(t.value, 'ATOM')
+        t.type = self.reserved.get(t.value, 'ATOM')
         return t
 
-    def t_newline(t):
+    def t_newline(self, t):
         r'\n+'
         t.lexer.lineno += len(t.value)
 
-    def t_error(t):
+    def t_error(self, t):
         print "Illegal character '%s'" % t.value[0]
         t.lexer.skip(1)
-
-    return lex.lex()

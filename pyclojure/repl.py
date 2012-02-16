@@ -2,9 +2,10 @@
 
 import re
 import sys
-from pyclojure.lexer import lisplexer
-from pyclojure.parser import lispparser
-from pyclojure.core import evaluate, tostring, Scope
+
+from pyclojure.lexer import PyClojureLex
+from pyclojure.parser import PyClojureParse
+from pyclojure.core import evaluate, tostring, GlobalScope
 
 try:
     import readline
@@ -22,11 +23,11 @@ else:
     import atexit
     atexit.register(readline.write_history_file, histfile)
 
-parse = lispparser()
-lexer = lisplexer()
+lexer = PyClojureLex().build()
+parser = PyClojureParse().build()
 
 def main():
-    global_scope = Scope()
+    global_scope = GlobalScope()
     scopechain = [global_scope]
     while True:
         try:
@@ -34,7 +35,8 @@ def main():
             if re.search('^\s*$', txt):
                 continue
             else:
-                print(tostring(evaluate(parse(txt), scopechain)))
+                print(tostring(evaluate(
+                            parser.parse(txt, lexer=lexer), scopechain)))
         except EOFError:
             break
         except KeyboardInterrupt:
