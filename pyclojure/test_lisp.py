@@ -29,6 +29,12 @@ def test_parser():
     assert parse('()') == List()
 
 
+def test_reader_macros():
+    parse = PyClojureParse().build().parse
+    assert parse("@a") == parse("(deref a)")
+    assert parse("'a") == parse("(quote a)")
+
+
 def test_core():
     Atom()
     Atom('a')
