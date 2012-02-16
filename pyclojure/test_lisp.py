@@ -65,11 +65,15 @@ def test_core():
     Map()["1"] = 2
 
 
-def test_eval():
+def evalparser():
     parse = PyClojureParse().build().parse
     scopechain = [GlobalScope()]
     def evalparse(x):
         return evaluate(parse(x), scopechain)
+    return evalparse
+
+def test_eval():
+    evalparse = evalparser()
     assert evalparse("666") == 666
     assert evalparse("6.66") == 6.66
     assert evalparse("nil") == None
@@ -93,7 +97,7 @@ def test_eval():
         assert False, "UnknownVariable exception not raised!"
     except UnknownVariable:
         pass
-    scopechain[-1]["a"] = 777
+    evalparse("(def a 777)")
     assert evalparse("a") == 777
     assert evalparse("a") == 777
     evalparse("(def a 666)")
@@ -114,14 +118,28 @@ def test_eval():
     assert evalparse("({a 2 3 a} a)") == 2
     assert evalparse("({a 2 3 a} 3)") == 666
 
+
 def test_function_calling():
-    parse = PyClojureParse().build().parse
-    scopechain = [GlobalScope()]
-    def evalparse(x):
-        return evaluate(parse(x), scopechain)
-    # Test builtin python function calling
+    '''
+    Test builtin python function calling
+    '''
+    evalparse = evalparser()
     assert evalparse("(abs (- 0 100))") == 100
     assert evalparse("(round 3.3)") == 3.0
+
+
+def test_float_parsing():
+    '''
+    Test builtin python function calling
+    '''
+    evalparse = evalparser()
+    assert evalparse("1") == 1
+    assert evalparse("1.2") == 1.2
+    assert evalparse(".12") == .12
+    assert evalparse("0.12") == .12
+    assert evalparse("0.12E2") == 12
+    assert evalparse("-0.12E+02") == -12
+    assert evalparse("-0.12E-2") == -.0012
 
 
 def test_to_string():
@@ -145,5 +163,8 @@ def test_to_string():
 
 
 def test_scope():
+    '''
+    Fixme - eventually add tests for nested scope, lexical scope, etc.
+    '''
     s = Scope()
     s["a"] = 666
