@@ -95,10 +95,10 @@ class GlobalScope(Scope):
     def __init__(self, *args, **kwargs):
         Scope.__init__(self, *args, **kwargs)
         # Get all builtin python functions
-        python_functions = [(name, PythonFunction(obj)) for name, obj\
+        python_callables = [(name, PythonFunction(obj)) for name, obj\
                                 in __builtins__.items() if\
-                                type(abs) == type(obj)]
-        self.update(python_functions)
+                                callable(obj)]
+        self.update(python_callables)
 
         # These functions take a variable number of arguments
         variadic_operators = {'+': ('add', 0),
