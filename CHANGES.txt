@@ -1,5 +1,2 @@
-Change-log for PyClojure.
+For changes, see commit history at github.com/eigenhombre/PyClojure.
 
-This file will be added to as part of each release
-
-----
