@@ -42,7 +42,7 @@ class PyClojureLex(object):
         return t
 
     def t_READMACRO(self, t):
-        r'[@\'#^`\\][\*\+\!\-\_a-zA-Z_-]+'
+        r'[@\'#^`\\.][\*\+\!\-\_a-zA-Z_-]+'
         # Just the standard atom regex will all the possible reader
         # chars prepended to it.
         return t

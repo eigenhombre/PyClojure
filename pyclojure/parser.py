@@ -39,11 +39,17 @@ def quote_atom(raw):
 def deref_atom(raw):
     return List(Atom('deref'), Atom(raw[1:]))
 
+def init_type(raw):
+    # Due to how python types are initialized, we can just treat them
+    # as function calls.
+    return Atom(raw[1:])
+
 # Map from the regex that matches the atom to the function that takes
 # in a string and returns the correct ast
 READER_MACROS = {
     r'^@.*': deref_atom,
     r'^\'.*': quote_atom,
+    r'^\..*': init_type,
     }
 
 class PyClojureParse(object):
