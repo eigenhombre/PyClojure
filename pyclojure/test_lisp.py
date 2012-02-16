@@ -33,6 +33,7 @@ def test_reader_macros():
     parse = PyClojureParse().build().parse
     assert parse("@a") == parse("(deref a)")
     assert parse("'a") == parse("(quote a)")
+    assert parse("(.float 3)") == parse("(float 3)")
 
 
 def test_core():
@@ -146,6 +147,7 @@ def test_float_parsing():
     assert evalparse("0.12E2") == 12
     assert evalparse("-0.12E+02") == -12
     assert evalparse("-0.12E-2") == -.0012
+    assert evalparse("(.float 3)") == 3.0
 
 
 def test_to_string():
