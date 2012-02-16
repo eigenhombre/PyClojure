@@ -116,6 +116,31 @@ class TypeError(Exception):
     pass
 
 
+BUILTIN_FUNCTIONS = {}
+
+def register_builtin(name):
+    """
+    A decorator that registers built in functions.
+
+    @register_builtin("def")
+    def def(args, scopes):
+        implementation here
+    """
+    def inner(func):
+        BUILTIN_FUNCTIONS[name] = func
+        return func
+    return inner
+
+@register_builtin("def")
+def def_(args, scopes):
+    if len(args) != 2:
+        raise TypeError("def takes two arguments")
+    atom, rhs = args[0:2]
+    if type(atom) is not Atom:
+        raise TypeError("First argument to def must be atom")
+    scopes[-1][atom.name()] = evaluate(rhs, scopes)
+
+
 def find_in_scopechain(scopes, name):
     for scope in reversed(scopes):
         try:
@@ -179,14 +204,9 @@ def eval_list(contents, scopes):
         return evaluate(first, scopes)[evaluate(rest[0], scopes)]
     elif type(first) is Atom:
         name = first.name()
-        if name == "def":
-            if len(rest) != 2:
-                raise TypeError("def takes two arguments")
-            atom, rhs = rest[0:2]
-            if type(atom) is not Atom:
-                raise TypeError("First argument to def must be atom")
-            scopes[-1][atom.name()] = evaluate(rhs, scopes)
-            return
+        if name in BUILTIN_FUNCTIONS:
+            func = BUILTIN_FUNCTIONS[name]
+            return func(rest, scopes)
         else:
             val = find_in_scopechain(scopes, name)
             if not val:
