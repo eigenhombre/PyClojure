@@ -76,17 +76,6 @@ class Function(ComparableExpr):
     pass
 
 
-class PythonFunction(Function):
-    def __init__(self, func):
-        self.func = func
-
-    def call(self, args):
-        return self.func(*args)
-
-    def __repr__(self):
-        return "PYTHONFUNCTION(%s)" % self.func.__name__
-
-
 class Scope(dict):
     pass
 
@@ -95,7 +84,7 @@ class GlobalScope(Scope):
     def __init__(self, *args, **kwargs):
         Scope.__init__(self, *args, **kwargs)
         # Get all builtin python functions
-        python_callables = [(name, PythonFunction(obj)) for name, obj\
+        python_callables = [(name, obj) for name, obj\
                                 in __builtins__.items() if\
                                 callable(obj)]
         self.update(python_callables)
@@ -107,8 +96,7 @@ class GlobalScope(Scope):
                               '/': ('div', 1)}
         def variadic_generator(fname, default):
             func = getattr(operator, fname)
-            return PythonFunction(
-                lambda *args: reduce(func, args) if args else default)
+            return (lambda *args: reduce(func, args) if args else default)
         for name, info in variadic_operators.items():
             self[name] = variadic_generator(*info)
 
@@ -116,7 +104,7 @@ class GlobalScope(Scope):
             '!': operator.inv,
             '==': operator.eq,
             }
-        self.update((name, PythonFunction(func)) for name, func in\
+        self.update((name, func) for name, func in\
                         non_variadic_operators.items())
 
 
@@ -203,8 +191,8 @@ def eval_list(contents, scopes):
             val = find_in_scopechain(scopes, name)
             if not val:
                 raise UnknownVariable("Function %s is unknown")
-            if issubclass(type(val), Function):
+            if callable(val):
                 args = map((lambda obj: evaluate(obj, scopes)), rest)
-                return val.call(args)
+                return val(*args)
             else:
                 raise TypeError("%s is not callable" % name)
