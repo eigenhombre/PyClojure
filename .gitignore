@@ -5,3 +5,6 @@ parsetab.py
 .project
 .pydevproject
 parser.out
+build
+dist
+*.egg-info
