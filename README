@@ -30,6 +30,7 @@ There has been some discussion[4] as well about getting Clojure running
 under PyPy, something which I think would be quite interesting.
 
 Feel free to join in!  For next steps, see Issues list on GitHub.
+Please see the file guidelines.txt for contribution guidelines.
 
 
 WHAT'S THERE NOW:

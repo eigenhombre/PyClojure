@@ -1,0 +1,11 @@
+I'm striving for 100% test coverage.  Please add test cases for any
+new contributions whenever possible.  Ideally, write only enough test
+code to fail, then write only enough production code to make the tests
+pass.  Iterate as needed.[1]
+
+Thanks in advance,
+John
+
+[1] http://www.apress.com/9781590599815/ is a good reference which has
+more details on the subject of test-driven development in Python.
+
