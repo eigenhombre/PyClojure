@@ -210,7 +210,7 @@ def eval_list(contents, scopes):
         else:
             val = find_in_scopechain(scopes, name)
             if not val:
-                raise UnknownVariable("Function %s is unknown")
+                raise UnknownVariable("Function %s is unknown" % name)
             if callable(val):
                 args = map((lambda obj: evaluate(obj, scopes)), rest)
                 return val(*args)
