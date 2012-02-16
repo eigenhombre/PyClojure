@@ -44,7 +44,9 @@ def main():
             break
         except Exception, e:
             print e
-            return 1
+            #  return 1  <-- for now, we assume interactive session at REPL.
+            #  later/soon, we should handle source files as well.
+
 
 if __name__ == "__main__":
     exit_code = main()
