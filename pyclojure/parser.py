@@ -6,7 +6,7 @@ from pyclojure.core import Atom, Keyword, List, Vector, Map
 
 # BNF grammar for 'lisp'
 # sexpr : atom
-#       | readmacro
+#       | readmacro sexpr
 #       | keyword
 #       | float
 #       | integer
@@ -33,23 +33,23 @@ def make_map(args):
         m[k] = v
     return m
 
-def quote_atom(raw):
-    return List(Atom('quote'), Atom(raw[1:]))
+def quote_expr(raw):
+    return List(Atom('quote'), raw)
 
-def deref_atom(raw):
-    return List(Atom('deref'), Atom(raw[1:]))
+def deref_expr(raw):
+    return List(Atom('deref'), raw)
 
 def init_type(raw):
     # Due to how python types are initialized, we can just treat them
     # as function calls.
-    return Atom(raw[1:])
+    return raw
 
 # Map from the regex that matches the atom to the function that takes
-# in a string and returns the correct ast
+# in an ast, and modifies it as specified by the macro
 READER_MACROS = {
-    r'^@.*': deref_atom,
-    r'^\'.*': quote_atom,
-    r'^\..*': init_type,
+    r'@': deref_expr,
+    r'\'': quote_expr,
+    r'\.': init_type,
     }
 
 class PyClojureParse(object):
@@ -69,10 +69,10 @@ class PyClojureParse(object):
         p[0] = Atom(p[1])
 
     def p_sexpr_readmacro(self, p):
-        'sexpr : READMACRO'
+        'sexpr : READMACRO sexpr'
         for regex, func in READER_MACROS.items():
             if re.match(regex, p[1]):
-                p[0] = func(p[1])
+                p[0] = func(p[2])
                 return
 
     def p_keyword(self, p):
