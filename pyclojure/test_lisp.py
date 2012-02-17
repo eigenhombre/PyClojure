@@ -155,7 +155,11 @@ def test_function_calling():
         assert False, "TypeError expected"
     except TypeError:
         pass
-
+    try:
+        evalparse("(def 3 a)")
+        assert False, "TypeError expected"
+    except TypeError:
+        pass
 
 def test_float_parsing():
     '''
