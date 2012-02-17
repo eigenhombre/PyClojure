@@ -72,6 +72,14 @@ def test_core():
     assert Map(x=1)["x"] == 1
 
 
+def test_python_compat():
+    assert List(1, 2, 3) == [1, 2, 3]
+    assert Map() == {}
+    assert Map(a=3) == {'a': 3}
+    assert Vector(*range(10)) == range(10)
+    assert map(abs, List(-1, -2, -3)) == List(1, 2, 3)
+
+
 def evalparser():
     parse = PyClojureParse().build().parse
     scopechain = [GlobalScope()]
