@@ -19,16 +19,18 @@ class Map(ComparableExpr, ImmutableDict):
             ImmutableDict.__init__(self, kwargs)
 
     def __eq__(self, other):
-        if type(other) is not Map:
+        try:
+            my_keys = sorted(self.keys())
+            their_keys = sorted(other.keys())
+            for mine, theirs in zip(my_keys, their_keys):
+                if mine != theirs:
+                    return False
+                if self[mine] != other[theirs]:
+                    return False
+        except:
             return False
-        my_keys = sorted(self.keys())
-        their_keys = sorted(other.keys())
-        for mine, theirs in zip(my_keys, their_keys):
-            if mine != theirs:
-                return False
-            if self[mine] != other[theirs]:
-                return False
-        return True
+        else:
+            return True
 
     def __repr__(self):
         return 'MAP(%s)' % (dict(self))
@@ -46,15 +48,18 @@ class Atom(ComparableExpr):
 
 class ComparableIter(ComparableExpr):
     def __eq__(self, other):
-        # FIXME: This one is... interesting when called on infinite generators
-        if not issubclass(type(other), ComparableIter):
-            return False
-        if len(self) != len(other):
-            return False
-        for a, b in zip(self, other):
-            if a != b:
+        # FIXME: This one is... interesting when called on infinite
+        # generators
+        try:
+            if len(self) != len(other):
                 return False
-        return True
+            for a, b in zip(self, other):
+                if a != b:
+                    return False
+        except:
+            return False
+        else:
+            return True
 
 
 class List(ComparableIter, list):
