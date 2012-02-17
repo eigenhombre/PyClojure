@@ -10,27 +10,28 @@ class ComparableExpr(object):
     def __ne__(self, other):
         return not (self == other)
 
-class Map(ComparableExpr):
+
+class Map(ComparableExpr, ImmutableDict):
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs:
-            self.__dict = ImmutableDict(args[0])
+            ImmutableDict.__init__(self, args[0])
         else:
-            self.__dict = ImmutableDict(kwargs)
+            ImmutableDict.__init__(self, kwargs)
 
-    def __getitem__(self, name):
-        return self.__dict[name]
+    def __eq__(self, other):
+        if type(other) is not Map:
+            return False
+        my_keys = sorted(self.keys())
+        their_keys = sorted(other.keys())
+        for mine, theirs in zip(my_keys, their_keys):
+            if mine != theirs:
+                return False
+            if self[mine] != other[theirs]:
+                return False
+        return True
 
     def __repr__(self):
-        return 'MAP(%s)' % (self.__dict)
-
-    def items(self):
-        return self.__dict.items()
-
-    def keys(self):
-        return self.__dict.keys()
-
-    def values(self):
-        return self.__dict.values()
+        return 'MAP(%s)' % (dict(self))
 
 class Atom(ComparableExpr):
     def __init__(self, name=None, value=None):
