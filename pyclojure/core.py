@@ -98,7 +98,11 @@ class GlobalScope(Scope):
                               '/': ('div', 1)}
         def variadic_generator(fname, default):
             func = getattr(operator, fname)
-            return (lambda *args: reduce(func, args) if args else default)
+            ret = (lambda *args: reduce(func, args) if args else default)
+            # For string representation; otherwise just get 'lambda':
+            ret.__name__ = fname
+            return ret
+
         for name, info in variadic_operators.items():
             self[name] = variadic_generator(*info)
 
@@ -111,10 +115,6 @@ class GlobalScope(Scope):
 
 
 class UnknownVariable(Exception):
-    pass
-
-
-class TypeError(Exception):
     pass
 
 
@@ -147,7 +147,7 @@ def find_in_scopechain(scopes, name):
     for scope in reversed(scopes):
         try:
             return scope[name]
-        except:
+        except KeyError:
             pass
 
 
@@ -160,6 +160,8 @@ def tostring(x):
         return x.name()
     elif type(x) is Keyword:
         return ":"+x.name
+    elif x.__class__.__name__ in ['function', 'builtin_function_or_method']:
+        return str(x)
     elif type(x) is List:
         inner = ' '.join([tostring(x) for x in x.contents()])
         return '(%s)' % inner

@@ -31,7 +31,7 @@ def main():
     scopechain = [global_scope]
     while True:
         try:
-            txt = raw_input("pylisp> ")
+            txt = raw_input("pyclojure> ")
             if re.search('^\s*$', txt):
                 continue
             else:

@@ -147,6 +147,8 @@ def test_float_parsing():
     assert evalparse("-0.12E+02") == -12
     assert evalparse("-0.12E-2") == -.0012
     assert evalparse("(.float 3)") == 3.0
+    assert 'function abs' in str(evalparse("abs"))
+    assert 'function add' in str(evalparse("+"))
 
 
 def test_to_string():
