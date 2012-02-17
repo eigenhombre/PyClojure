@@ -60,7 +60,7 @@ def test_core():
     assert List(Atom('b')) != List(Atom('a'))
     assert Vector(1, 2) != Vector(2, 1)
     assert Vector(1, 2) == Vector(1, 2)
-    assert Vector(1, 2) != List(1, 2)
+    assert Vector(1, 2) == List(1, 2)
     assert Keyword("a") == Keyword("a")
     assert Keyword("a") != Keyword("b")
     Map()
