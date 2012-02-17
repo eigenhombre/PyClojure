@@ -1,3 +1,6 @@
+Unit testing can be done by typing 'nosetests'.  You'll need to install
+nose first (e.g. 'pip install nose').
+
 I'm striving for 100% test coverage.  Please add test cases for any
 new contributions whenever possible.  Ideally, write only enough test
 code to fail, then write only enough production code to make the tests
