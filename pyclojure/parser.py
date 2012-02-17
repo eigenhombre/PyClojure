@@ -1,10 +1,12 @@
 import sys
+import re
 import ply.yacc as yacc
 from pyclojure.lexer import PyClojureLex
 from pyclojure.core import Atom, Keyword, List, Vector, Map
 
 # BNF grammar for 'lisp'
 # sexpr : atom
+#       | readmacro sexpr
 #       | keyword
 #       | float
 #       | integer
@@ -31,6 +33,25 @@ def make_map(args):
         m[k] = v
     return Map(m)
 
+def quote_expr(raw):
+    return List(Atom('quote'), raw)
+
+def deref_expr(raw):
+    return List(Atom('deref'), raw)
+
+def init_type(raw):
+    # Due to how python types are initialized, we can just treat them
+    # as function calls.
+    return raw
+
+# Map from the regex that matches the atom to the function that takes
+# in an ast, and modifies it as specified by the macro
+READER_MACROS = {
+    r'@': deref_expr,
+    r'\'': quote_expr,
+    r'\.': init_type,
+    }
+
 class PyClojureParse(object):
     def build(self):
         return yacc.yacc(module=self, errorlog=LispLogger(sys.stderr))
@@ -46,6 +67,13 @@ class PyClojureParse(object):
     def p_sexpr_atom(self, p):
         'sexpr : ATOM'
         p[0] = Atom(p[1])
+
+    def p_sexpr_readmacro(self, p):
+        'sexpr : READMACRO sexpr'
+        for regex, func in READER_MACROS.items():
+            if re.match(regex, p[1]):
+                p[0] = func(p[2])
+                return
 
     def p_keyword(self, p):
         'sexpr : KEYWORD'

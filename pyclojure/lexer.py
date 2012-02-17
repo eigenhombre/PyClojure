@@ -8,7 +8,7 @@ class PyClojureLex(object):
     reserved = {'nil': 'NIL'}
 
     tokens = ['ATOM', 'KEYWORD',
-              'NUMBER',
+              'NUMBER', 'READMACRO',
               'LBRACKET', 'RBRACKET',
               'LBRACE', 'RBRACE',
               'LPAREN', 'RPAREN'] + list(reserved.values())
@@ -39,6 +39,11 @@ class PyClojureLex(object):
     def t_ATOM(self, t):
         r'[\*\+\!\-\_a-zA-Z_-]+'
         t.type = self.reserved.get(t.value, 'ATOM')
+        return t
+
+    def t_READMACRO(self, t):
+        r'[@\'#^`\\.]+'
+        # All the possible reader macro chars
         return t
 
     def t_newline(self, t):

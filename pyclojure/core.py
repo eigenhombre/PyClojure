@@ -78,17 +78,6 @@ class Function(ComparableExpr):
     pass
 
 
-class PythonFunction(Function):
-    def __init__(self, func):
-        self.func = func
-
-    def call(self, args):
-        return self.func(*args)
-
-    def __repr__(self):
-        return "PYTHONFUNCTION(%s)" % self.func.__name__
-
-
 class Scope(dict):
     pass
 
@@ -97,10 +86,10 @@ class GlobalScope(Scope):
     def __init__(self, *args, **kwargs):
         Scope.__init__(self, *args, **kwargs)
         # Get all builtin python functions
-        python_functions = [(name, PythonFunction(obj)) for name, obj\
+        python_callables = [(name, obj) for name, obj\
                                 in __builtins__.items() if\
-                                type(abs) == type(obj)]
-        self.update(python_functions)
+                                callable(obj)]
+        self.update(python_callables)
 
         # These functions take a variable number of arguments
         variadic_operators = {'+': ('add', 0),
@@ -109,8 +98,7 @@ class GlobalScope(Scope):
                               '/': ('div', 1)}
         def variadic_generator(fname, default):
             func = getattr(operator, fname)
-            return PythonFunction(
-                lambda *args: reduce(func, args) if args else default)
+            return (lambda *args: reduce(func, args) if args else default)
         for name, info in variadic_operators.items():
             self[name] = variadic_generator(*info)
 
@@ -118,7 +106,7 @@ class GlobalScope(Scope):
             '!': operator.inv,
             '==': operator.eq,
             }
-        self.update((name, PythonFunction(func)) for name, func in\
+        self.update((name, func) for name, func in\
                         non_variadic_operators.items())
 
 
@@ -128,6 +116,31 @@ class UnknownVariable(Exception):
 
 class TypeError(Exception):
     pass
+
+
+BUILTIN_FUNCTIONS = {}
+
+def register_builtin(name):
+    """
+    A decorator that registers built in functions.
+
+    @register_builtin("def")
+    def def(args, scopes):
+        implementation here
+    """
+    def inner(func):
+        BUILTIN_FUNCTIONS[name] = func
+        return func
+    return inner
+
+@register_builtin("def")
+def def_(args, scopes):
+    if len(args) != 2:
+        raise TypeError("def takes two arguments")
+    atom, rhs = args[0:2]
+    if type(atom) is not Atom:
+        raise TypeError("First argument to def must be atom")
+    scopes[-1][atom.name()] = evaluate(rhs, scopes)
 
 
 def find_in_scopechain(scopes, name):
@@ -178,31 +191,30 @@ def evaluate(x, scopes):
                          for k, v in x.items()]))
     elif type(x) is List:
         contents = x.contents()
-        if len(contents) == 0:
-            return x  # ()
-        first = contents[0]
-        if type(first) is Atom:
-            name = first.name()
-            if name == "def":
-                atom, rhs = contents[1:3]
-                if type(atom) is not Atom:
-                    raise TypeError("%s is not the name of an atom!" %
-                                    tostring(atom))
-                scopes[-1][atom.name()] = evaluate(rhs, scopes)
-                return atom
-            elif find_in_scopechain(scopes, name):
-                val = find_in_scopechain(scopes, name)
-                if issubclass(type(val), Function):
-                    args = map((lambda obj: evaluate(obj, scopes)),
-                               contents[1:])
-                    return val.call(args)
-                else:
-                    raise TypeError("%s is not callable" % tostring(val))
-            else:
-                raise UnknownVariable("Function %s is unknown!" % name)
-        elif type(first) is Map:
-            return evaluate(first, scopes)[evaluate(contents[1], scopes)]
-        else:
-            raise SyntaxError("%s is not a function or special form!"
-                              % first)
+        return eval_list(contents, scopes)
     return x
+
+
+def eval_list(contents, scopes):
+    if len(contents) == 0:
+        return List()  # ()
+    first = contents[0]
+    rest = contents[1:]
+    if type(first) is Map:
+        if len(rest) != 1:
+            raise TypeError("Map lookup takes one argument")
+        return evaluate(first, scopes)[evaluate(rest[0], scopes)]
+    elif type(first) is Atom:
+        name = first.name()
+        if name in BUILTIN_FUNCTIONS:
+            func = BUILTIN_FUNCTIONS[name]
+            return func(rest, scopes)
+        else:
+            val = find_in_scopechain(scopes, name)
+            if not val:
+                raise UnknownVariable("Function %s is unknown" % name)
+            if callable(val):
+                args = map((lambda obj: evaluate(obj, scopes)), rest)
+                return val(*args)
+            else:
+                raise TypeError("%s is not callable" % name)

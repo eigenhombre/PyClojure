@@ -29,6 +29,14 @@ def test_parser():
     assert parse('()') == List()
 
 
+def test_reader_macros():
+    parse = PyClojureParse().build().parse
+    assert parse("@a") == parse("(deref a)")
+    assert parse("'a") == parse("(quote a)")
+    assert parse("(.float 3)") == parse("(float 3)")
+    assert parse("'(1 2 3)") == parse("(quote (1 2 3))")
+
+
 def test_core():
     Atom()
     Atom('a')
@@ -138,6 +146,7 @@ def test_float_parsing():
     assert evalparse("0.12E2") == 12
     assert evalparse("-0.12E+02") == -12
     assert evalparse("-0.12E-2") == -.0012
+    assert evalparse("(.float 3)") == 3.0
 
 
 def test_to_string():
