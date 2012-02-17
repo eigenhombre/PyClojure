@@ -62,7 +62,6 @@ def test_core():
     assert Map(x=1) != Map(x=2)
     assert Map(x=1) != Map(x=1, a=3)
     assert Map(x=1)["x"] == 1
-    Map()["1"] = 2
 
 
 def evalparser():
@@ -81,10 +80,9 @@ def test_eval():
     assert evalparse("[]") == Vector()
     assert evalparse("[1 2 3]") == Vector(1, 2, 3)
     assert evalparse("{}") == Map()
-    m = Map()
-    m[1] = 2
+    m = Map({1:2})
     assert evalparse("{1 2}") == m
-    m[3] = 4
+    m = Map({1:2, 3:4})
     assert evalparse("{1 2, 3 4}") == m
 
     try:

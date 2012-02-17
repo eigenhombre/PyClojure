@@ -25,5 +25,6 @@ setup(
     entry_points=dict(console_scripts=['pyclojure=pyclojure.repl:main']),
     install_requires=[
         'ply>=3.4',
+        'funktown>=0.3.0'
     ],
 )

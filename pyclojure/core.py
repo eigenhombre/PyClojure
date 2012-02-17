@@ -1,4 +1,5 @@
 import operator
+from funktown import ImmutableDict, ImmutableVector
 
 
 class ComparableExpr(object):
@@ -10,15 +11,12 @@ class ComparableExpr(object):
 class Map(ComparableExpr):
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs:
-            self.__dict = args[0]
+            self.__dict = ImmutableDict(args[0])
         else:
-            self.__dict = kwargs
+            self.__dict = ImmutableDict(kwargs)
 
     def __getitem__(self, name):
         return self.__dict[name]
-
-    def __setitem__(self, name, value):
-        self.__dict[name] = value
 
     def __repr__(self):
         return 'MAP(%s)' % (self.__dict)
@@ -43,7 +41,7 @@ class Atom(ComparableExpr):
         return "ATOM(%s)" % (self.__name)
 
 
-class ComparableList(ComparableExpr):
+class List(ComparableExpr):
     def __init__(self, *args):
         self.__contents = []
         for arg in args:
@@ -57,12 +55,16 @@ class ComparableList(ComparableExpr):
                            ','.join([str(el) for el in self.__contents]))
 
 
-class List(ComparableList):
-    pass
+class Vector(ComparableExpr):
+    def __init__(self, *args):
+        self.__contents = ImmutableVector(args)
 
+    def contents(self):
+        return self.__contents
 
-class Vector(ComparableList):
-    pass
+    def __repr__(self):
+        return "%s(%s)" % (self,__class__.__name__.upper(),
+                           ','.join([str(el) for el in self.__contents]))
 
 
 class Keyword(ComparableExpr):
