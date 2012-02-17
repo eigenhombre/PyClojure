@@ -25,11 +25,11 @@ class LispLogger(yacc.PlyLogger):
             super(type(self), self).debug(*args, **kwargs)
 
 def make_map(args):
-    m = Map()
+    m = {}
     kvlist = [(args[i], args[i+1]) for i in range(0, len(args), 2)]
     for k, v in kvlist:
         m[k] = v
-    return m
+    return Map(m)
 
 class PyClojureParse(object):
     def build(self):
