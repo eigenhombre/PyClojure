@@ -18,9 +18,6 @@ class Map(ComparableExpr):
     def __getitem__(self, name):
         return self.__dict[name]
 
-    def __setitem__(self, name, value):
-        self.__dict[name] = value
-
     def __repr__(self):
         return 'MAP(%s)' % (self.__dict)
 
@@ -44,7 +41,7 @@ class Atom(ComparableExpr):
         return "ATOM(%s)" % (self.__name)
 
 
-class ComparableList(ComparableExpr):
+class List(ComparableExpr):
     def __init__(self, *args):
         self.__contents = []
         for arg in args:
@@ -56,10 +53,6 @@ class ComparableList(ComparableExpr):
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__.upper(),
                            ','.join([str(el) for el in self.__contents]))
-
-
-class List(ComparableList):
-    pass
 
 
 class Vector(ComparableExpr):
