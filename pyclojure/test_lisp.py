@@ -143,11 +143,18 @@ def test_eval():
 
 def test_function_calling():
     '''
-    Test builtin python function calling
+    Test builtin function calling
     '''
     evalparse = evalparser()
     assert evalparse("(abs (- 0 100))") == 100
     assert evalparse("(round 3.3)") == 3.0
+    evalparse("(def a 3)")
+    assert evalparse("a") == 3
+    try:
+        evalparse("(def a 3 2)")
+        assert False, "TypeError expected"
+    except TypeError:
+        pass
 
 
 def test_float_parsing():
