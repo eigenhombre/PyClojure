@@ -44,30 +44,36 @@ class Atom(ComparableExpr):
         return "ATOM(%s)" % (self.__name)
 
 
-class List(ComparableExpr):
+class ComparableIter(ComparableExpr):
+    def __eq__(self, other):
+        # FIXME: This one is... interesting when called on infinite generators
+        if not issubclass(type(other), ComparableIter):
+            return False
+        if len(self) != len(other):
+            return False
+        for a, b in zip(self, other):
+            if a != b:
+                return False
+        return True
+
+
+class List(ComparableIter, list):
     def __init__(self, *args):
-        self.__contents = []
         for arg in args:
-            self.__contents.append(arg)
-
-    def contents(self):
-        return self.__contents
+            self.append(arg)
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__.upper(),
-                           ','.join([str(el) for el in self.__contents]))
+                           ','.join([str(el) for el in self]))
 
 
-class Vector(ComparableExpr):
+class Vector(ComparableIter, ImmutableVector):
     def __init__(self, *args):
-        self.__contents = ImmutableVector(args)
-
-    def contents(self):
-        return self.__contents
+        ImmutableVector.__init__(self, args)
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__.upper(),
-                           ','.join([str(el) for el in self.__contents]))
+                           ','.join([str(el) for el in self]))
 
 
 class Keyword(ComparableExpr):
@@ -166,10 +172,10 @@ def tostring(x):
     elif x.__class__.__name__ in ['function', 'builtin_function_or_method']:
         return str(x)
     elif type(x) is List:
-        inner = ' '.join([tostring(x) for x in x.contents()])
+        inner = ' '.join([tostring(x) for x in x])
         return '(%s)' % inner
     elif type(x) is Vector:
-        inner = ' '.join([tostring(x) for x in x.contents()])
+        inner = ' '.join([tostring(x) for x in x])
         return '[%s]' % inner
     elif type(x) is Map:
         inner = ', '.join(['%s %s' % (k, v) for k,v in x.items()])
@@ -190,12 +196,12 @@ def evaluate(x, scopes):
     elif type(x) is Keyword:
         return x
     elif type(x) is Vector:
-        return apply(Vector, [evaluate(el, scopes) for el in x.contents()])
+        return apply(Vector, [evaluate(el, scopes) for el in x])
     elif type(x) is Map:
         return Map(dict([(evaluate(k, scopes), evaluate(v, scopes))
                          for k, v in x.items()]))
     elif type(x) is List:
-        contents = x.contents()
+        contents = x
         return eval_list(contents, scopes)
     return x
 
