@@ -48,8 +48,6 @@ class Atom(ComparableExpr):
 
 class ComparableIter(ComparableExpr):
     def __eq__(self, other):
-        # FIXME: This one is... interesting when called on infinite
-        # generators
         try:
             if len(self) != len(other):
                 return False

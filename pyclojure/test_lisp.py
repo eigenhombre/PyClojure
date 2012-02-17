@@ -76,8 +76,16 @@ def test_python_compat():
     assert List(1, 2, 3) == [1, 2, 3]
     assert Map() == {}
     assert Map(a=3) == {'a': 3}
+    assert Map(a=3) != ['a', 3]
     assert Vector(*range(10)) == range(10)
     assert map(abs, List(-1, -2, -3)) == List(1, 2, 3)
+    def infinite_gen():
+        x = 1
+        while 1:
+            x += 1
+            yield x
+    assert List(1, 2, 3) != infinite_gen()
+    assert List(1, 2) != List(1, 2, 3)
 
 
 def evalparser():
