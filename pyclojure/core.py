@@ -13,27 +13,19 @@ class ComparableExpr(object):
 
 class Map(ComparableExpr, ImmutableDict):
     def __init__(self, *args, **kwargs):
-        if len(args) == 1 and not kwargs:
-            ImmutableDict.__init__(self, args[0])
+        if not kwargs:
+            if len(args) == 1:
+                ImmutableDict.__init__(self, args[0])
+            else:
+                ImmutableDict.__init__(self)
         else:
             ImmutableDict.__init__(self, kwargs)
 
     def __eq__(self, other):
-        try:
-            my_keys = sorted(self.keys())
-            their_keys = sorted(other.keys())
-            for mine, theirs in zip(my_keys, their_keys):
-                if mine != theirs:
-                    return False
-                if self[mine] != other[theirs]:
-                    return False
-        except:
-            return False
-        else:
-            return True
+        return ImmutableDict.__eq__(self, other)
 
     def __repr__(self):
-        return 'MAP(%s)' % (dict(self))
+        return 'MAP(%s)' % (str(self))
 
 class Atom(ComparableExpr):
     def __init__(self, name=None, value=None):
@@ -76,7 +68,7 @@ class Vector(ComparableIter, ImmutableVector):
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__.upper(),
-                           ','.join([str(el) for el in self]))
+                           str(self))
 
 
 class Keyword(ComparableExpr):
