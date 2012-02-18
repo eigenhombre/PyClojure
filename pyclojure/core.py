@@ -7,28 +7,33 @@ class ComparableExpr(object):
         return (isinstance(other, self.__class__)
                 and self.__dict__ == other.__dict__)
 
+    def __ne__(self, other):
+        return not (self == other)
 
-class Map(ComparableExpr):
+
+class Map(ComparableExpr, ImmutableDict):
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs:
-            self.__dict = ImmutableDict(args[0])
+            ImmutableDict.__init__(self, args[0])
         else:
-            self.__dict = ImmutableDict(kwargs)
+            ImmutableDict.__init__(self, kwargs)
 
-    def __getitem__(self, name):
-        return self.__dict[name]
+    def __eq__(self, other):
+        try:
+            my_keys = sorted(self.keys())
+            their_keys = sorted(other.keys())
+            for mine, theirs in zip(my_keys, their_keys):
+                if mine != theirs:
+                    return False
+                if self[mine] != other[theirs]:
+                    return False
+        except:
+            return False
+        else:
+            return True
 
     def __repr__(self):
-        return 'MAP(%s)' % (self.__dict)
-
-    def items(self):
-        return self.__dict.items()
-
-    def keys(self):
-        return self.__dict.keys()
-
-    def values(self):
-        return self.__dict.values()
+        return 'MAP(%s)' % (dict(self))
 
 class Atom(ComparableExpr):
     def __init__(self, name=None, value=None):
@@ -41,30 +46,37 @@ class Atom(ComparableExpr):
         return "ATOM(%s)" % (self.__name)
 
 
-class List(ComparableExpr):
-    def __init__(self, *args):
-        self.__contents = []
-        for arg in args:
-            self.__contents.append(arg)
+class ComparableIter(ComparableExpr):
+    def __eq__(self, other):
+        try:
+            if len(self) != len(other):
+                return False
+            for a, b in zip(self, other):
+                if a != b:
+                    return False
+        except:
+            return False
+        else:
+            return True
 
-    def contents(self):
-        return self.__contents
+
+class List(ComparableIter, list):
+    def __init__(self, *args):
+        for arg in args:
+            self.append(arg)
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__.upper(),
-                           ','.join([str(el) for el in self.__contents]))
+                           ','.join([str(el) for el in self]))
 
 
-class Vector(ComparableExpr):
+class Vector(ComparableIter, ImmutableVector):
     def __init__(self, *args):
-        self.__contents = ImmutableVector(args)
-
-    def contents(self):
-        return self.__contents
+        ImmutableVector.__init__(self, args)
 
     def __repr__(self):
-        return "%s(%s)" % (self,__class__.__name__.upper(),
-                           ','.join([str(el) for el in self.__contents]))
+        return "%s(%s)" % (self.__class__.__name__.upper(),
+                           ','.join([str(el) for el in self]))
 
 
 class Keyword(ComparableExpr):
@@ -163,10 +175,10 @@ def tostring(x):
     elif x.__class__.__name__ in ['function', 'builtin_function_or_method']:
         return str(x)
     elif type(x) is List:
-        inner = ' '.join([tostring(x) for x in x.contents()])
+        inner = ' '.join([tostring(x) for x in x])
         return '(%s)' % inner
     elif type(x) is Vector:
-        inner = ' '.join([tostring(x) for x in x.contents()])
+        inner = ' '.join([tostring(x) for x in x])
         return '[%s]' % inner
     elif type(x) is Map:
         inner = ', '.join(['%s %s' % (k, v) for k,v in x.items()])
@@ -187,12 +199,12 @@ def evaluate(x, scopes):
     elif type(x) is Keyword:
         return x
     elif type(x) is Vector:
-        return apply(Vector, [evaluate(el, scopes) for el in x.contents()])
+        return apply(Vector, [evaluate(el, scopes) for el in x])
     elif type(x) is Map:
         return Map(dict([(evaluate(k, scopes), evaluate(v, scopes))
                          for k, v in x.items()]))
     elif type(x) is List:
-        contents = x.contents()
+        contents = x
         return eval_list(contents, scopes)
     return x
 

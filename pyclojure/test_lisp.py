@@ -60,7 +60,7 @@ def test_core():
     assert List(Atom('b')) != List(Atom('a'))
     assert Vector(1, 2) != Vector(2, 1)
     assert Vector(1, 2) == Vector(1, 2)
-    assert Vector(1, 2) != List(1, 2)
+    assert Vector(1, 2) == List(1, 2)
     assert Keyword("a") == Keyword("a")
     assert Keyword("a") != Keyword("b")
     Map()
@@ -70,6 +70,22 @@ def test_core():
     assert Map(x=1) != Map(x=2)
     assert Map(x=1) != Map(x=1, a=3)
     assert Map(x=1)["x"] == 1
+
+
+def test_python_compat():
+    assert List(1, 2, 3) == [1, 2, 3]
+    assert Map() == {}
+    assert Map(a=3) == {'a': 3}
+    assert Map(a=3) != ['a', 3]
+    assert Vector(*range(10)) == range(10)
+    assert map(abs, List(-1, -2, -3)) == List(1, 2, 3)
+    def infinite_gen():
+        x = 1
+        while 1:
+            x += 1
+            yield x
+    assert List(1, 2, 3) != infinite_gen()
+    assert List(1, 2) != List(1, 2, 3)
 
 
 def evalparser():
@@ -127,12 +143,23 @@ def test_eval():
 
 def test_function_calling():
     '''
-    Test builtin python function calling
+    Test builtin function calling
     '''
     evalparse = evalparser()
     assert evalparse("(abs (- 0 100))") == 100
     assert evalparse("(round 3.3)") == 3.0
-
+    evalparse("(def a 3)")
+    assert evalparse("a") == 3
+    try:
+        evalparse("(def a 3 2)")
+        assert False, "TypeError expected"
+    except TypeError:
+        pass
+    try:
+        evalparse("(def 3 a)")
+        assert False, "TypeError expected"
+    except TypeError:
+        pass
 
 def test_float_parsing():
     '''
