@@ -8,3 +8,4 @@ parser.out
 build
 dist
 *.egg-info
+*.swp
