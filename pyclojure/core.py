@@ -1,5 +1,5 @@
 import operator
-from funktown import ImmutableDict, ImmutableVector
+from funktown import ImmutableDict, ImmutableVector, ImmutableList
 
 
 class ComparableExpr(object):
@@ -52,10 +52,9 @@ class ComparableIter(ComparableExpr):
             return True
 
 
-class List(ComparableIter, list):
+class List(ComparableIter, ImmutableList):
     def __init__(self, *args):
-        for arg in args:
-            self.append(arg)
+        ImmutableList.__init__(self, args)
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__.upper(),
@@ -141,7 +140,8 @@ def register_builtin(name):
 def def_(args, scopes):
     if len(args) != 2:
         raise TypeError("def takes two arguments")
-    atom, rhs = args[0:2]
+    atom = args.first()
+    rhs = args.second()
     if type(atom) is not Atom:
         raise TypeError("First argument to def must be atom")
     scopes[-1][atom.name()] = evaluate(rhs, scopes)
@@ -202,14 +202,14 @@ def evaluate(x, scopes):
 
 
 def eval_list(contents, scopes):
-    if len(contents) == 0:
+    if contents.empty():
         return List()  # ()
-    first = contents[0]
-    rest = contents[1:]
+    first = contents.first()
+    rest = contents.rest()
     if type(first) is Map:
-        if len(rest) != 1:
+        if not rest.rest().empty():
             raise TypeError("Map lookup takes one argument")
-        return evaluate(first, scopes)[evaluate(rest[0], scopes)]
+        return evaluate(first, scopes)[evaluate(rest.first(), scopes)]
     elif type(first) is Atom:
         name = first.name()
         if name in BUILTIN_FUNCTIONS:
