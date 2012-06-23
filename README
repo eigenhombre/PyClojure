@@ -9,6 +9,12 @@ and does very little (see file test_lisp.py for examples).  I probably
 shouldn't even call it PyClojure at this point, but the name at least
 serves to indicate my intentions....
 
+!!!!!!!!!!
+NOTE: the clojure-py project is much further along at this point and I will 
+probably keep contributing there rather than improving PyClojure; however, 
+I'm keeping this code around as an example of using the Ply tools.
+!!!!!!!!!!
+
 DEPENDENCIES
 
 - PLY [1] (for lexing and parsing)
